@@ -1,0 +1,90 @@
+gif_types:
+  bomb_self:
+    - 'https://i.gifer.com/4yxm.gif'
+    - 'https://media.giphy.com/media/D2FN33DkIb4Eo/giphy.gif'
+    - 'https://media.giphy.com/media/3o85xxSZvFZgD4wXde/giphy-downsized.gif'
+    - 'https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTVyN2N0Y240ZzFhaXB4cDRrZmR6dnFoZDMwbnE0dWZzYmJ5ejd3eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/mFmuXkziY2RsQ/giphy.gif'
+    - 'https://media1.tenor.com/m/afyF7H1IBDAAAAAd/cj-gta-san-andreas.gif'
+
+  bomb_to:
+    - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzBiYjYzZjM0MjQ5Yzg5ZmZhZDgyN2U5ODM3NzExOTU5MjY5ODg2MCZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/26vUDLOP9YIc8oxGg/giphy.gif'
+    - 'https://media.giphy.com/media/KxHaSWSpTlEGc/giphy.gif'
+    - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExczZobmJ6aTd2MnAzcWRiNTc1ZWdneHRqajdsMWNtb29kZXdjamtrcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/9JczsR0EesmSUJvYIl/giphy-downsized.gif'
+    - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDBtbjN1MjlrMDl2N2luNWk0Zml5YjlkdXd6dmN5anR4bXB4dDVwbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5zouYAJEs95WBzFDSM/giphy.gif'
+    - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbGZlcWY1NnJmdjJycDA1amNyY3VrZjljdGZvaDN3YjNucXQ5eDVwMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/cRBRQf8syLUyY/giphy.gif'
+    - 'https://media.giphy.com/media/PaZfwi3usXeqgDohU2/giphy-downsized-large.gif'
+    - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnFmODBpcGE4NWh1ODVjdDJ2cG95a2UxM244cW9wbmZiY3h4NWVlcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xUOwFVSVwWYrJoFkuk/giphy.gif'
+    - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTlhZzF6eDA1cHRxbjAxOGJ5bXI4MWE5bmN3cndvd2lqZWM4NTR0eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HeqqtD0qxr08cWA/giphy.gif'
+    - 'https://cdn.discordapp.com/attachments/1149398121110057088/1260191131678019674/EeFkwtI.jpg?ex=668e6bf3&is=668d1a73&hm=2be00202f6dc49d3982b9b9d146b4e1bdfe42bc26c339af5c9ac7296ca43b03b&'
+    - 'https://media1.tenor.com/m/F3Qm0szA7_0AAAAd/live-nuclear-reaction-live-tucker-reaction.gif'
+    - 'https://media1.tenor.com/m/3-sZqgLtqTkAAAAd/minecraft-bomb.gif'
+    - 'https://media1.tenor.com/m/oikhN7oqj3kAAAAC/nuke-tsar.gif'
+    - 'https://media1.tenor.com/m/encI57-fvuQAAAAd/gord%C3%A3o-bomba-nuclear.gif'
+
+  broken_bomb:
+    - 'https://media.giphy.com/media/MMiIlUTunJQBO/giphy.gif'
+    - 'https://media1.tenor.com/m/AiT9SetA2BMAAAAC/roblox-memes-roblox.gif'
+
+  hug:
+    - 'https://media.giphy.com/media/l8ooOxhcItowwLPuZn/giphy.gif'
+    - 'https://media.giphy.com/media/4No2q4ROPXO7T6NWhS/giphy-downsized-large.gif'
+    - 'https://media.giphy.com/media/f6y4qvdxwEDx6/giphy.gif'
+    - 'https://media.giphy.com/media/42YlR8u9gV5Cw/giphy.gif'
+    - 'https://media.giphy.com/media/U4LhzzpfTP7NZ4UlmH/giphy.gif'
+    - 'https://media.giphy.com/media/VduFvPwm3gfGO8duNN/giphy.gif'
+
+  kick:
+    - 'https://media.giphy.com/media/l3V0j3ytFyGHqiV7W/giphy.gif'
+    - 'https://media.giphy.com/media/v6eyaePwdptVWDWi9q/giphy.gif'
+    - 'https://media.giphy.com/media/l1J3AS8RShMebsmgU/giphy.gif'
+    - 'https://media.giphy.com/media/pSUqYChzMn9IFAzGdu/giphy.gif'
+    - 'https://media.giphy.com/media/5jQ2FIhtc3M88/giphy.gif'
+    - 'https://media.giphy.com/media/xUO4t2gkWBxDi/giphy.gif'
+    - 'https://media.giphy.com/media/uiMXGVRdvWmll5Ry9m/giphy.gif'
+    - 'https://media.giphy.com/media/jRPw78f1LRNT2/giphy.gif'
+    - https://media1.tenor.com/m/oikhN7oqj3kAAAAC/nuke-tsar.gif
+  wave:
+    - 'https://media.giphy.com/media/aDS4z67KKaumbMVanT/giphy.gif'
+    - 'https://media.giphy.com/media/3oriNScTbEzEVoR1Is/giphy.gif'
+    - 'https://media.giphy.com/media/yyVph7ANKftIs/giphy.gif'
+    - 'https://media.giphy.com/media/yyVph7ANKftIs/giphy.gif'
+    - 'https://media.giphy.com/media/GEcxaasvgkVQVRsFXm/giphy.gif'
+    - 'https://media.giphy.com/media/MZQegYjXfRR4qAwQrC/giphy.gif'
+
+  kiss:
+    - 'https://media.giphy.com/media/Vi0Ws3t4JSLOgdkaBq/giphy-downsized-large.gif'
+    - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTA3ZTRlMjgyNzgxMWMyYzZlMDFkZmE4MTVkYmU1YTE3MDg1NTQxZCZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/dpSrm4cwUmCeQ/giphy.gif'
+    - 'https://media.giphy.com/media/8FGvwxpd9rrvW/giphy.gif'
+    - 'https://media.giphy.com/media/jR22gdcPiOLaE/giphy.gif'
+    - 'https://media.giphy.com/media/zkppEMFvRX5FC/giphy.gif'
+    - 'https://media.giphy.com/media/vUrwEOLtBUnJe/giphy.gif'
+
+  pet:
+    - 'https://media.giphy.com/media/PHZ7v9tfQu0o0/giphy.gif'
+    - 'https://media.giphy.com/media/ARSp9T7wwxNcs/giphy.gif'
+    - 'https://media.giphy.com/media/5tmRHwTlHAA9WkVxTU/giphy.gif'
+    - 'https://media.giphy.com/media/Z7x24IHBcmV7W/giphy.gif'
+    - 'https://media.giphy.com/media/SSPW60F2Uul8OyRvQ0/giphy.gif'
+    - 'https://media.giphy.com/media/3oz8xDLT82QiURnPS8/giphy.gif'
+
+  smile:
+    - 'https://media.giphy.com/media/rFfmUWVMOyKVG/giphy.gif'
+    - 'https://media.giphy.com/media/862A6X2sooSsw/giphy.gif'
+    - 'https://media.giphy.com/media/TlDd1mxmPGQo/giphy.gif'
+    - 'https://media.giphy.com/media/bqSkJ4IwNcoZG/giphy.gif'
+    - 'https://media.giphy.com/media/h1N8JV9p3FqgM/giphy.gif'
+    - 'https://media.giphy.com/media/iKCejlLBqcJcrw3xWG/giphy.gif'
+
+  sorry:
+    - 'https://media.giphy.com/media/MWqaCFYwIHffW/giphy.gif'
+    - 'https://media.giphy.com/media/l378t1rjeZtCl1mmc/giphy.gif'
+    - 'https://media.giphy.com/media/l378hdfH0IGAgPl9m/giphy.gif'
+    - 'https://media.giphy.com/media/l4EoMx1ooMtK6zNHa/giphy.gif'
+
+  handshake:
+    - 'https://media.giphy.com/media/2HtWpp60NQ9CU/giphy.gif'
+    - 'https://media.giphy.com/media/b5L1Lt3k4hGNDZWVIw/giphy.gif'
+    - 'https://media.giphy.com/media/s4VoCsFz8prlhSFCeS/giphy.gif'
+    - 'https://media.giphy.com/media/Dj8NIuXppqHAY/giphy.gif'
+    - 'https://media.giphy.com/media/62d0RjjDh97ENgj742/giphy.gif'
+    - 'https://media.giphy.com/media/I3EsiEPZWgpqg/giphy-downsized.gif'
