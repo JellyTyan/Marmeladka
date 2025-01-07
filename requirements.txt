@@ -1,6 +1,10 @@
 hikari==2.1.0
 hikari-lightbulb==2.3.5.post1
+hikari-miru==0.4.0
 python-dotenv==1.0.1
 pyyaml==6.0.2
 aiohttp==3.11.10
 nekos.py==1.1.0
+pendulum==3.0.0
+aiosqlite==0.20.0
+Pillow==11.0.0

@@ -10,8 +10,7 @@ plugin = lightbulb.Plugin("Cutie")
 
 
 @plugin.command
-@lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.command("cutie", "Милота")
+@lightbulb.command("cutie", "Милота", app_command_dm_enabled=False)
 @lightbulb.implements(lightbulb.SlashCommandGroup)
 async def cute(ctx: lightbulb.Context):
     pass

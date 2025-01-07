@@ -10,7 +10,6 @@ gif_types:
     - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzBiYjYzZjM0MjQ5Yzg5ZmZhZDgyN2U5ODM3NzExOTU5MjY5ODg2MCZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/26vUDLOP9YIc8oxGg/giphy.gif'
     - 'https://media.giphy.com/media/KxHaSWSpTlEGc/giphy.gif'
     - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExczZobmJ6aTd2MnAzcWRiNTc1ZWdneHRqajdsMWNtb29kZXdjamtrcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/9JczsR0EesmSUJvYIl/giphy-downsized.gif'
-    - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDBtbjN1MjlrMDl2N2luNWk0Zml5YjlkdXd6dmN5anR4bXB4dDVwbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5zouYAJEs95WBzFDSM/giphy.gif'
     - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbGZlcWY1NnJmdjJycDA1amNyY3VrZjljdGZvaDN3YjNucXQ5eDVwMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/cRBRQf8syLUyY/giphy.gif'
     - 'https://media.giphy.com/media/PaZfwi3usXeqgDohU2/giphy-downsized-large.gif'
     - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnFmODBpcGE4NWh1ODVjdDJ2cG95a2UxM244cW9wbmZiY3h4NWVlcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xUOwFVSVwWYrJoFkuk/giphy.gif'
@@ -20,52 +19,37 @@ gif_types:
     - 'https://media1.tenor.com/m/3-sZqgLtqTkAAAAd/minecraft-bomb.gif'
     - 'https://media1.tenor.com/m/oikhN7oqj3kAAAAC/nuke-tsar.gif'
     - 'https://media1.tenor.com/m/encI57-fvuQAAAAd/gord%C3%A3o-bomba-nuclear.gif'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325076941144981514/nouns-dao.gif?ex=677a7991&is=67792811&hm=c2425800f4ce337003f15a2829b414ea9a7d9300ae9b24b8d303b2d0ffc464a0&'
+    -  'https://cdn.discordapp.com/attachments/1201221560267190446/1325076958664593429/demolition-un.gif?ex=677a7995&is=67792815&hm=7f17a288701b191ec0c8500212dde5b44a711345a3b6289a1fd019a54ef7af98&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325077032123498588/missile-drop-itsrucka.gif?ex=677a79a7&is=67792827&hm=9ecfdec2daa045fd4e6e3333ccd5c3111b736bf144075b11801fd8d4a3b43b87&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325077057142521876/cj-gta-san-andreas.gif?ex=677a79ad&is=6779282d&hm=620e5b3632e9c22fcf6de1e9e83200dce54f5645c43d8911cad07ee803acbdd4&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444507046641674/arknights-firewatch.gif?ex=677bcfe4&is=677a7e64&hm=47ca01402c3c69e1b67e6f85e1a94db96d0bf7c399c889adba17e39ac73f0c4b&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444525891518508/call-of-duty-modern-warfare-explosion.gif?ex=677bcfe8&is=677a7e68&hm=2b23010d21c05efd5dc158f0e2c94651265510beaa37dfa99a47553a2922bcb1&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444538277560410/memes-cursed-images.gif?ex=677bcfeb&is=677a7e6b&hm=46f821cf059fe579b4528d0446aa63100efa72c157500d44805c96d668f09a2e&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444557965496363/me-and-my-friends-before-the-nuclear-bombs-hits-us-nuke-bomb-cat-petting.gif?ex=677bcff0&is=677a7e70&hm=e5587457c4af5391c96eda75170fcbd82185e919f997e46939b479c00d70637e&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444557965496363/me-and-my-friends-before-the-nuclear-bombs-hits-us-nuke-bomb-cat-petting.gif?ex=677bcff0&is=677a7e70&hm=e5587457c4af5391c96eda75170fcbd82185e919f997e46939b479c00d70637e&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444581919162388/boom-nuclear.gif?ex=677bcff5&is=677a7e75&hm=9f5fa89243d4c8d1e0672f8249153a866cb1beac899e6d4b8185753385693c7e&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444611233284168/gabriel-da-manga-musiquinha.gif?ex=677bcffc&is=677a7e7c&hm=8c92880af8e8af6981874114bc56276109d1ac823493ffbcb007dc692b477538&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444622813757572/bomb-bone.gif?ex=677bcfff&is=677a7e7f&hm=ab8d92029b62034b63190f032a6a7698d9f4a7565d1304c3f6568ecaedef4cc6&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444704124538880/dotheevolution-bomb.gif?ex=677bd013&is=677a7e93&hm=e40199eb4088f70822dc8795e7613d50da8ab9bca7350ca567b81382d1ed4f82&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444749888323634/nuclear-bomb-bomb.gif?ex=677bd01d&is=677a7e9d&hm=6f6a16067134b0c6f51f2f0cf505d59c0857dc08c9cb237a9e2e463b94eab830&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444790061498419/nuclear-missile-ready-red-alert-2.gif?ex=677bd027&is=677a7ea7&hm=65c91f317716d14961874d365cb546c1a5e5c409e02a42b83fd93091cb85e453&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325444821397278822/pedro-pascal-joie.gif?ex=677bd02e&is=677a7eae&hm=52ab470a22370709f4c2a756ccea00bc4ae4dba74f8e030fb7a2dd25b63612da&'
+
 
   broken_bomb:
     - 'https://media.giphy.com/media/MMiIlUTunJQBO/giphy.gif'
     - 'https://media1.tenor.com/m/AiT9SetA2BMAAAAC/roblox-memes-roblox.gif'
 
-  hug:
-    - 'https://media.giphy.com/media/l8ooOxhcItowwLPuZn/giphy.gif'
-    - 'https://media.giphy.com/media/4No2q4ROPXO7T6NWhS/giphy-downsized-large.gif'
-    - 'https://media.giphy.com/media/f6y4qvdxwEDx6/giphy.gif'
-    - 'https://media.giphy.com/media/42YlR8u9gV5Cw/giphy.gif'
-    - 'https://media.giphy.com/media/U4LhzzpfTP7NZ4UlmH/giphy.gif'
-    - 'https://media.giphy.com/media/VduFvPwm3gfGO8duNN/giphy.gif'
+  mivina:
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325075215339753533/hohol.gif?ex=677a77f6&is=67792676&hm=824da7359c5e12a1080071d3ec9e7ad0c21448a5bf1afabfd83b824c0848f471&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325075238475530330/knorr-bogna.gif?ex=677a77fb&is=6779267b&hm=3d00d196a10954b403c5ce031b2aec628bf9be31c6c36a8d06d9a9ee275a760b&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325075282377441311/instant-noodles-cup-ramen.gif?ex=677a7806&is=67792686&hm=79e64c8f8c9cf0fd78282aa58c6f6401ad8c8b269873a63a434a685e25d27f4a&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325075318729609276/arnold-schwarzenegger-eating-noodles.gif?ex=677a780e&is=6779268e&hm=2b245db0f4ee68d05e6e6a34826e0a3a7898d598128b65d73097800f48597f43&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325075340237996115/shani-indira-natio-shani-indira.gif?ex=677a7813&is=67792693&hm=9c61de1a19f725aa5f837ef03c4e497c6c757d2bfd26f9404cb41385a2d5bf76&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325075361586876436/eating-ramen-noodles.gif?ex=677a7818&is=67792698&hm=cbef048ba9f015f26af5b56317fd8f89bd5ea6c0337cb567529e37c3c293fb0b&'
+    - 'https://cdn.discordapp.com/attachments/1201221560267190446/1325075378401705995/josh-stagner-ramen.gif?ex=677a781c&is=6779269c&hm=8c8c1c078c8e63c63d129dc520f20a13c35237a30cd2f9769017e460ef869844&'
 
-  kick:
-    - 'https://media.giphy.com/media/l3V0j3ytFyGHqiV7W/giphy.gif'
-    - 'https://media.giphy.com/media/v6eyaePwdptVWDWi9q/giphy.gif'
-    - 'https://media.giphy.com/media/l1J3AS8RShMebsmgU/giphy.gif'
-    - 'https://media.giphy.com/media/pSUqYChzMn9IFAzGdu/giphy.gif'
-    - 'https://media.giphy.com/media/5jQ2FIhtc3M88/giphy.gif'
-    - 'https://media.giphy.com/media/xUO4t2gkWBxDi/giphy.gif'
-    - 'https://media.giphy.com/media/uiMXGVRdvWmll5Ry9m/giphy.gif'
-    - 'https://media.giphy.com/media/jRPw78f1LRNT2/giphy.gif'
-    - https://media1.tenor.com/m/oikhN7oqj3kAAAAC/nuke-tsar.gif
-  wave:
-    - 'https://media.giphy.com/media/aDS4z67KKaumbMVanT/giphy.gif'
-    - 'https://media.giphy.com/media/3oriNScTbEzEVoR1Is/giphy.gif'
-    - 'https://media.giphy.com/media/yyVph7ANKftIs/giphy.gif'
-    - 'https://media.giphy.com/media/yyVph7ANKftIs/giphy.gif'
-    - 'https://media.giphy.com/media/GEcxaasvgkVQVRsFXm/giphy.gif'
-    - 'https://media.giphy.com/media/MZQegYjXfRR4qAwQrC/giphy.gif'
-
-  kiss:
-    - 'https://media.giphy.com/media/Vi0Ws3t4JSLOgdkaBq/giphy-downsized-large.gif'
-    - 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTA3ZTRlMjgyNzgxMWMyYzZlMDFkZmE4MTVkYmU1YTE3MDg1NTQxZCZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/dpSrm4cwUmCeQ/giphy.gif'
-    - 'https://media.giphy.com/media/8FGvwxpd9rrvW/giphy.gif'
-    - 'https://media.giphy.com/media/jR22gdcPiOLaE/giphy.gif'
-    - 'https://media.giphy.com/media/zkppEMFvRX5FC/giphy.gif'
-    - 'https://media.giphy.com/media/vUrwEOLtBUnJe/giphy.gif'
-
-  pet:
-    - 'https://media.giphy.com/media/PHZ7v9tfQu0o0/giphy.gif'
-    - 'https://media.giphy.com/media/ARSp9T7wwxNcs/giphy.gif'
-    - 'https://media.giphy.com/media/5tmRHwTlHAA9WkVxTU/giphy.gif'
-    - 'https://media.giphy.com/media/Z7x24IHBcmV7W/giphy.gif'
-    - 'https://media.giphy.com/media/SSPW60F2Uul8OyRvQ0/giphy.gif'
-    - 'https://media.giphy.com/media/3oz8xDLT82QiURnPS8/giphy.gif'
 
   smile:
     - 'https://media.giphy.com/media/rFfmUWVMOyKVG/giphy.gif'

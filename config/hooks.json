@@ -1,0 +1,22 @@
+{
+    "info_channel": {
+        "title": "__Information__",
+        "description": "All the topics you might be interested in are gathered here\n\n**Didn't find something?**\nGo to the #tickets channel",
+        "footer": "Magic is UTILS",
+        "footer_image": "https://cdn.discordapp.com/attachments/1109526498299359303/1323410479544274954/e451ef152d93bf88ca7e63b2f1480707.jpg?ex=6774698e&is=6773180e&hm=597ab80dd3bd208a74644aad3d7eb864db8dda7a76ecaa6dc62c292f4d9bebf3&",
+        "image_url": "https://cdn.discordapp.com/attachments/1109526498299359303/1323409246494130218/f52eabfbbe055eaa82c3ee1e2c6d3183.gif?ex=67746868&is=677316e8&hm=8a5a5456563139e6d169b5acb27698f7f276c862917a6e5770fe40cda4b03eef&",
+        "image_cat_url": "https://cdn.discordapp.com/attachments/883379603719200838/1030767319867215903/image.png",
+        "channel_id": 1149398121110057082,
+        "message_id": 1323639067899985963
+    },
+    "ticket_channel": {
+        "title": "Cozy catgirls, do you need this?",
+        "description": "And seriously, you can ask a question here and even get an answer! (It's not every day). Pick a topic for your question and go for it!",
+        "footer": "And here comes the sunshine",
+        "footer_image": "https://cdn.discordapp.com/attachments/1109526498299359303/1323636844356829194/bac63071cc5a8ec3f409c13e8c9aaedd.jpg?ex=67753c5f&is=6773eadf&hm=0d3026a59ffdbc83349e9bfa85be672ec5a564a473be0a979381c5ffbd7a2699&",
+        "image_url": "https://cdn.discordapp.com/attachments/1109526498299359303/1323637171630116934/735d73725f77188e554756b5e11a2bf1.gif?ex=67753cad&is=6773eb2d&hm=1b181c08db80cf66fa467b0a966522e74e1e44c4f5288ca0bd01dd646f97f1d8&",
+        "image_cat_url": "https://cdn.discordapp.com/attachments/883379603719200838/1030767319867215903/image.png",
+        "channel_id": 1149398121110057083,
+        "message_id": 1323639070244737195
+    }
+}
