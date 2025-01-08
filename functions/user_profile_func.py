@@ -5,7 +5,7 @@ class UserProfileFunc():
         self.db_manager = DatabaseManager()
 
     async def get_bump_count(self, id: int):
-        bump_count = await self.db_manager.fetchone("SELECT bump_count FROM user_data WHERE id = ?", (id,))
+        bump_count = await self.db_manager.fetchone("select bump_count FROM user_data WHERE id = ?", (id,))
 
         if bump_count is None:
             return "0"
@@ -13,7 +13,7 @@ class UserProfileFunc():
             return str(bump_count[0])
 
     async def get_voice_count(self, id: int):
-        voice_time = await self.db_manager.fetchone("SELECT voice_time FROM user_data WHERE id = ?", (id,))
+        voice_time = await self.db_manager.fetchone("select voice_time FROM user_data WHERE id = ?", (id,))
 
         if voice_time is None:
             return "0"
@@ -26,7 +26,7 @@ class UserProfileFunc():
             return f"{days}d {hours:02d}:{minutes:02d}:{seconds:02d}"
 
     async def get_message_count(self, id: int):
-        message_count = await self.db_manager.fetchone("SELECT message_count FROM user_data WHERE id = ?", (id,))
+        message_count = await self.db_manager.fetchone("select message_count FROM user_data WHERE id = ?", (id,))
 
         if message_count is None:
             return "0"

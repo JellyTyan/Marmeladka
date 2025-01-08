@@ -308,6 +308,18 @@ async def tike_command(ctx: lightbulb.Context) -> None:
         )
         await ctx.respond(f"||{user.mention}||", embed=embed)
 
+@emotion.child
+@lightbulb.command("фак", "Весёлый третий пальчик.")
+@lightbulb.implements(lightbulb.SlashSubCommand)
+async def midfinger_command(ctx: lightbulb.Context) -> None:
+    embed = create_embed(
+        description=f"{ctx.user.mention}\n**Показывает фак**",
+        color=0x2B2D31,
+        image_url=await get_anime_image("midfing")
+    )
+    await ctx.respond(embed=embed)
+
+
 
 def get_random_gif(type: str) -> str:
     with open("src/yaml/gifs.yaml", "r") as file:

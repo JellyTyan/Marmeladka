@@ -20,12 +20,14 @@ async def bioMarmeladka(ctx: lightbulb.Context) -> None:
     embed = hikari.Embed(
         title="Приветик, я Мармеладка!",
         description=f"""
-            {emoji_mhm} Лисичка для сервера Желешки {emoji_mhm}\n
-            ❤️ У нас интима не было ❤️ \n
-            {emoji_hmury} Выполняю весь гланвый функционал сервера! {emoji_hmury}
+            {emoji_mhm} Лисичка заботы и уюта на сервере Желешки! {emoji_mhm}\n
+            ❤️ Забота и внимание — моя суперсила! ❤️ \n
+            {emoji_hmury} Выполняю главный функционал сервера, чтобы вам всегда было уютно и весело! {emoji_hmury}\n
+            🌟 А знаете, почему меня зовут Мармеладка? Говорят, что я сладкая, как мармелад, и могу согреть ваше сердечко, даже если у вас тяжёлый день! 🌟
         """,
+        color=0xFF6F61,
     )
-    embed.set_image("https://img.artpal.com/320651/6-20-6-10-16-5-45m.jpg")
+    embed.set_image("https://static.zerochan.net/Senko.%28Sewayaki.Kitsune.no.Senko-san%29.full.2738566.jpg")
     await ctx.respond(embed=embed)
 
 
@@ -34,39 +36,59 @@ async def bioMarmeladka(ctx: lightbulb.Context) -> None:
 @lightbulb.implements(lightbulb.SlashSubCommand)
 async def bioZefirka(ctx: lightbulb.Context) -> None:
     guild_emojis = ctx.get_guild().get_emojis()
-    emoji_uwu = lightbulb.utils.get(guild_emojis, name="cool")
-    emoji_plak = lightbulb.utils.get(guild_emojis, name="angry")
-    emoji_wink = lightbulb.utils.get(guild_emojis, name="wink")
+    emoji_fox = lightbulb.utils.get(guild_emojis, name="fox")
 
     embed = hikari.Embed(
-        title="Хай, я Зефирка!",
+        title="Привет, я Зефирка!",
         description=f"""
-            {emoji_uwu} Бели Голодни Лисичка {emoji_uwu}\n
-            {emoji_wink} У нас был тройничёк {emoji_wink}\n
-            {emoji_plak} Могу проигрывать для тебя композиции {emoji_plak}
-            """,
+            {emoji_fox} Бедни и голодни лисичка! {emoji_fox}\n
+            🎵 Помогаю расслабиться и наслаждаться музыкой на сервере.\n
+            🌙 Говорят, что мои плейлисты уносят вас прямо в мир грёз.\n
+            🌟 Немного загадочная, но всегда на вашей стороне! 🌟
+        """,
+        color=0xFFC0CB,  # Розовый цвет, как зефир
     )
-    embed.set_image("https://i1.sndcdn.com/artworks-000542697177-o00sgu-t500x500.jpg")
+    embed.set_image("https://safebooru.org//samples/3072/sample_af8dc25e5edbf26c3fb0981dbd2f917fc55513eb.jpg?5213035")
     await ctx.respond(embed=embed)
 
 
 @bio.child
-@lightbulb.command("шокомелька", "Узнай о нашей подружке!")
+@lightbulb.command("шокомелька", "Узнай больше о Шокомельке!")
 @lightbulb.implements(lightbulb.SlashSubCommand)
-async def bioShocomelka(ctx: lightbulb.Context) -> None:
+async def bioShokomelka(ctx: lightbulb.Context) -> None:
     guild_emojis = ctx.get_guild().get_emojis()
-    emoji_woah = lightbulb.utils.get(guild_emojis, name="kogasawoah")
-    emoji_dead = lightbulb.utils.get(guild_emojis, name="mokoudeadinside")
+    emoji_lofi = lightbulb.utils.get(guild_emojis, name="lofi")
 
     embed = hikari.Embed(
-        title="Приветик, я Шокомелька",
+        title="Привет, я Шокомелька!",
         description=f"""
-            🤎 Мили енотик и подружка 🤎 \n
-            {emoji_woah} У него уже гарем {emoji_woah}\n
-            {emoji_dead} По настроению сижу у себя и слушаю музыку {emoji_dead}
-            """,
+            {emoji_lofi} Мили Енотик, которая знает, как создать атмосферу. {emoji_lofi}\n
+            🍫 Я подбираю музыку в зависимости от вашего настроения — от мягкого lofi до вдохновляющих мелодий.\n
+            🛋️ Заходите на трибуну, берите плед и чашку какао. Я позабочусь, чтобы вам было уютно. 🛋️
+        """,
+        color=0x8B4513,
     )
-    embed.set_image("https://cdn.discordapp.com/attachments/1109526498299359303/1152864808752914503/cdum6zjvawx51.png")
+    embed.set_image("https://preview.redd.it/7x5n9tieagd41.png?auto=webp&s=ba3405f28de9a249e1c9972bb8a3214876ede29d")
+    await ctx.respond(embed=embed)
+
+
+@bio.child
+@lightbulb.command("милка", "Узнай больше о Милке!")
+@lightbulb.implements(lightbulb.SlashSubCommand)
+async def bioMilka(ctx: lightbulb.Context) -> None:
+    guild_emojis = ctx.get_guild().get_emojis()
+    emoji_choco = lightbulb.utils.get(guild_emojis, name="choco")
+
+    embed = hikari.Embed(
+        title="Привет, я Милка!",
+        description=f"""
+            {emoji_choco} Немного другая версия Зефирки — более мягкая и весёлая! {emoji_choco}\n
+            🥛 Я люблю уют и спокойствие. Думаю, что мягкость — моя суперсила.\n
+            🌸 Вместе мы сделаем наш сервер особенным! 🌸
+        """,
+        color=0xFFFFFF,
+    )
+    embed.set_image("https://static.wikia.nocookie.net/mudae/images/0/05/Yozora_%28SKnS%292.png/revision/latest/scale-to-width/360?cb=20210420071604")
     await ctx.respond(embed=embed)
 
 
