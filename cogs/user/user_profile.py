@@ -43,11 +43,11 @@ async def user_profile(ctx: lightbulb.Context) -> None:
     idraw.text((211, 846), str(user_bump_count), font=text_font, anchor="ms", fill=(0, 0, 0))
     idraw.text((595, 846), str(user_invite_count), font=text_font, anchor="ms", fill=(0, 0, 0))
 
-    user_tag = "Loh"  # Get tag from database
+    user_tag = await UserProfileFunc().get_tag(user.id)
     tag_font = ImageFont.truetype('src/fonts/userProfile.otf', size=37)
     idraw.text((511, 268), user_tag, font=tag_font, anchor="ms", fill=(0, 0, 0))
 
-    user_biography = "Ya lublu pitonchikov"  # Get biography from database
+    user_biography = await UserProfileFunc().get_biograpgy(user.id)
     biography_font = ImageFont.truetype('src/fonts/userProfile.otf', size=38)
     wrapper = textwrap.TextWrapper(width=45, placeholder='...', break_long_words=True, max_lines=4)
     biography = wrapper.fill(text=user_biography)
