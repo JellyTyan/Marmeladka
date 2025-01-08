@@ -16,11 +16,11 @@ plugin = lightbulb.Plugin("Emotions")
 async def emotion(ctx: lightbulb.Context) -> None:
     pass
 
-@plugin.command
+@emotion.child
 @lightbulb.option("user", "Кого обнять?", hikari.User, required=True)
 @lightbulb.command("обнять", "Обнять кого-то", auto_defer=True)
-@lightbulb.implements(lightbulb.UserCommand)
-async def hug_command(ctx: lightbulb.UserContext) -> None:
+@lightbulb.implements(lightbulb.SlashSubCommand)
+async def hug_command(ctx: lightbulb.SlashContext) -> None:
     me = ctx.app.get_me()
     if me is None:
         return
