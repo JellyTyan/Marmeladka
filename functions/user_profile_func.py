@@ -42,17 +42,19 @@ class UserProfileFunc():
             return str(invite_count[0])
 
     async def get_biograpgy(self, id: int):
-        biography = await self.db_manager.fetchone("SELECT biography FROM user_bio WHERE id = ?", (id,))
+        biography = await self.db_manager.fetchone("SELECT biography FROM user_data WHERE id = ?", (id,))
 
-        if biography is None:
+        if biography is None or biography[0] is None:
             return "Биография не задана"
         else:
             return biography[0]
 
     async def get_tag(self, id: int):
-        tag = await self.db_manager.fetchone("SELECT tag FROM user_bio WHERE id = ?", (id,))
+        tag = await self.db_manager.fetchone("SELECT tag FROM user_data WHERE id = ?", (id,))
 
-        if tag is None:
+        print(tag)
+
+        if tag is None or tag[0] is None:
             return "Тег не задан"
         else:
             return tag[0]

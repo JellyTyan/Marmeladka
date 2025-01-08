@@ -45,12 +45,12 @@ async def user_profile(ctx: lightbulb.Context) -> None:
 
     user_tag = await UserProfileFunc().get_tag(user.id)
     tag_font = ImageFont.truetype('src/fonts/userProfile.otf', size=37)
-    idraw.text((511, 268), user_tag, font=tag_font, anchor="ms", fill=(0, 0, 0))
+    idraw.text((511, 268), str(user_tag), font=tag_font, anchor="ms", fill=(0, 0, 0))
 
     user_biography = await UserProfileFunc().get_biograpgy(user.id)
     biography_font = ImageFont.truetype('src/fonts/userProfile.otf', size=38)
     wrapper = textwrap.TextWrapper(width=45, placeholder='...', break_long_words=True, max_lines=4)
-    biography = wrapper.fill(text=user_biography)
+    biography = wrapper.fill(text=str(user_biography))
 
     for offset in [(-2, 0), (2, 0), (0, -2), (0, 2)]:
         idraw.multiline_text((64 + offset[0], 420 + offset[1]), biography, font=biography_font, fill=(0, 0, 0))
