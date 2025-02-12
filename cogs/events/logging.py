@@ -267,6 +267,9 @@ async def on_role_remove(event: hikari.RoleDeleteEvent) -> None:
     LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
     log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
 
+    if event.old_role is None:
+        return
+
     role_name = event.old_role.name
     if role_name is None:
         role_name = "Underfined"

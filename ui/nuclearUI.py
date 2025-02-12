@@ -48,10 +48,10 @@ class NuclearCase(miru.Modal, title="Впиши код-фразу и в кейс
                 return
 
             # Проверяем КД
-            if await nuclear_func.check_bomb_cooldown(user_id):
+            if await nuclear_func.check_cooldown(user_id, "bomb_cd"):
                 # Увеличиваем количество пультов и обновляем количевство в БД
-                await nuclear_func.update_bomb_cooldown(user_id)
-                await nuclear_func.wrote_bomb_log(user_id, ctx.author.username)
+                await nuclear_func.update_cooldown(user_id, "bomb_cd")
+                await nuclear_func.wrote_log(user_id, ctx.author.username, "bomb")
 
                 # Уведомляем о успешном обновлении кол-во и чистим сообщения
 
@@ -82,12 +82,12 @@ class NuclearCase(miru.Modal, title="Впиши код-фразу и в кейс
                 return
 
             # Проверяем КД
-            if await nuclear_func.check_mivina_cooldown(user_id):
+            if await nuclear_func.check_cooldown(user_id, "mivina_cd"):
                 # Обновляем КД
 
                 # Увеличиваем количество мивинок и обновляем БД
-                await nuclear_func.update_mivina_cooldown(user_id)
-                await nuclear_func.wrote_mivina_log(user_id, ctx.author.username)
+                await nuclear_func.update_cooldown(user_id, "mivina_cd")
+                await nuclear_func.wrote_log(user_id, ctx.author.username, "mivina")
 
                 # Уведомляем о успешком обновление кол-во и чистим сообщения
                 embedSuccesed = create_embed(
@@ -175,18 +175,20 @@ class SelfBombActivate(miru.Button):
         self.value = True
 
     async def callback(self, ctx: miru.ViewContext) -> None:
-        oldest_bomb_id = await nuclear_func.get_oldest_bomb_id(ctx.author.id)
+        oldest_bomb_id = await nuclear_func.get_oldest_weapon_id(ctx.author.id, "bomb")
+        if oldest_bomb_id is None:
+            return
         guild = ctx.get_guild()
         if guild is None:
             return
 
-        if await nuclear_func.is_bomb_activated(oldest_bomb_id):
+        if await nuclear_func.is_weapon_activated(oldest_bomb_id):
             await ctx.client.rest.edit_member(guild, ctx.author, communication_disabled_until=datetime.now(timezone.utc) + timedelta(seconds=300), reason="bomb")
             embed = create_embed(
                 description=f"Ладно...\n{ctx.author.mention}\n**У тебя прилёт от**\n{ctx.author.mention}",
                 image_url=get_random_gif("bomb_self")
             )
-            await nuclear_func.update_bomb_log(oldest_bomb_id)
+            await nuclear_func.update_log_used(oldest_bomb_id)
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.NONE)
             return
         else:
@@ -194,7 +196,7 @@ class SelfBombActivate(miru.Button):
                 description="Упс. Ядерка не сработала. Кажется она слишком старая.",
                 image_url="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDFlNTZoYXNjM21ta2FrbTZoN3E3MjNkMnhraGxhazJtaW42NjJ0ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qkf7qxSEUqNCataNjK/giphy.gif"
             )
-            await nuclear_func.update_bomb_log(oldest_bomb_id)
+            await nuclear_func.update_log_used(oldest_bomb_id)
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.NONE)
             return
         self.view.stop()

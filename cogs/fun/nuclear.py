@@ -188,7 +188,8 @@ class StartBombCommand(
             return
         # Проверка на наличие ядерок
         bombs_count = await nuclear_func.get_weapon_count(author.id, nuclear_type="bomb")
-        if bombs_count and bombs_count <= 0:
+        oldest_bomb_id = await nuclear_func.get_oldest_weapon_id(author.id, weapon_type="bomb")
+        if bombs_count and bombs_count <= 0 or oldest_bomb_id is None:
             await ctx.respond("Ваш ядерный арсенал пуст, Генерал!", flags=hikari.MessageFlag.EPHEMERAL)
             return
 
@@ -211,7 +212,6 @@ class StartBombCommand(
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
             return
 
-        oldest_bomb_id = await nuclear_func.get_oldest_bomb_id(author.id)
 
         # Интеракция при отправке на самого себя
         if target_member.id == author.id:
@@ -224,7 +224,7 @@ class StartBombCommand(
             return
 
         try:
-            if await nuclear_func.is_bomb_activated(oldest_bomb_id):
+            if await nuclear_func.is_weapon_activated(oldest_bomb_id):
                 if await nuclear_func.is_bomb_make_hirohito(oldest_bomb_id):
                     embed = create_embed(
                         title="О, нет!",
@@ -242,10 +242,10 @@ class StartBombCommand(
 
                 await ctx.client.rest.edit_member(guild, target_member, communication_disabled_until=pendulum.now("UTC").add(minutes=5), reason="bomb")
 
-                await nuclear_func.update_bomb_log(oldest_bomb_id)
+                await nuclear_func.update_log_used(oldest_bomb_id)
 
-                start_bomb = await nuclear_func.get_bomb_start_count(author.id)
-                await nuclear_func.update_bomb_start_count(author.id, start_bomb + 1)
+                start_bomb = await nuclear_func.get_start_count(author.id, "bomb_start_count")
+                await nuclear_func.update_start_count(author.id, start_bomb + 1, "bomb_start_count")
 
                 # self.bot.dispatch("bomb_start", inter.author, member)
             else:
@@ -253,7 +253,7 @@ class StartBombCommand(
                     description="Упс. Ядерка не сработала. Кажется она слишком старая.",
                     image_url="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDFlNTZoYXNjM21ta2FrbTZoN3E3MjNkMnhraGxhazJtaW42NjJ0ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qkf7qxSEUqNCataNjK/giphy.gif"
                 )
-                await nuclear_func.update_bomb_log(oldest_bomb_id)
+                await nuclear_func.update_log_used(oldest_bomb_id)
                 # self.bot.dispatch("bomb_start", ctx.author, member)
                 await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
                 return
@@ -306,7 +306,7 @@ class StartMivinaCommand(
 
         # Проверка на наличие мивинок у пользователя
         mivina_count = await nuclear_func.get_weapon_count(member.id, nuclear_type="mivina")
-        oldest_mivina_id = await nuclear_func.get_oldest_mivina_id(member.id)
+        oldest_mivina_id = await nuclear_func.get_oldest_weapon_id(member.id, weapon_type="mivina")
         if mivina_count is None or mivina_count <= 0 or oldest_mivina_id is None:
             await ctx.respond("Мивинки закончились, Генерал! К сожалению, ничем помочь не могу!", flags=hikari.MessageFlag.EPHEMERAL)
             return
@@ -317,7 +317,7 @@ class StartMivinaCommand(
             return
         # Убираем тайм-аут
         try:
-            if await nuclear_func.is_mivina_activated(oldest_mivina_id):
+            if await nuclear_func.is_weapon_activated(oldest_mivina_id):
                 await ctx.client.rest.edit_member(guild, member, communication_disabled_until=None, reason="mivina")
 
                 # Отправляем в канал Мармеладка информацию о использовании мивины
@@ -329,10 +329,10 @@ class StartMivinaCommand(
 
                 await ctx.respond("Так точно, Генерал, надеюсь снова такое не произойдёт!")
 
-                await nuclear_func.update_mivina_log(oldest_mivina_id)
+                await nuclear_func.update_log_used(oldest_mivina_id)
 
-                start_mivina = await nuclear_func.get_mivina_start_count(member.id)
-                await nuclear_func.update_mivina_start_count(member.id, start_mivina + 1)
+                start_mivina = await nuclear_func.get_start_count(member.id, "mivina_start_count")
+                await nuclear_func.update_start_count(member.id, start_mivina + 1, "mivina_start_count")
                 # self.bot.dispatch("mivina_start", inter.author)
             else:
                 await ctx.respond("Возьмите салфеточку, Генерал...")
@@ -342,7 +342,7 @@ class StartMivinaCommand(
                     )
 
                 await marmelad_channel.send(embed=embed)
-                await nuclear_func.update_mivina_log(oldest_mivina_id)
+                await nuclear_func.update_log_used(oldest_mivina_id)
                 # self.bot.dispatch("mivina_start", inter.author)
         except Exception as e:
             await ctx.respond("Простите, произошла неизвестная ошибка")

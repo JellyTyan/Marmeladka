@@ -16,8 +16,15 @@ class NuclearFunc():
 
 
     async def get_weapon_count(self, user_id: int, nuclear_type: str) -> int | None:
-        """Получение количества оружия у пользователя"""
-        if nuclear_type not in ["mivina", "nuclear"]:
+        """Получение количества оружия у пользователя
+        Args:
+            user_id (int): ID пользователя.
+            nuclear_type (str): Тип кулдауна ('mivina' или 'bomb').
+
+        Returns:
+            bool: True, если кулдаун прошёл, иначе False.
+        """
+        if nuclear_type not in ["mivina", "bomb"]:
             return None
         async with self.session() as session:
             async with session.begin():
@@ -28,25 +35,36 @@ class NuclearFunc():
         return weapon_count if weapon_count else 0
 
 
-    async def check_bomb_cooldown(self, user_id: int) -> bool:
-        """Проверка кулдауна для получения ядерки (кулдаун 1 день)."""
+    async def check_cooldown(self, user_id: int, cooldown_type: str) -> bool:
+        """Проверка кулдауна для получения предмета (ядерки или мивины).
 
+        Args:
+            user_id (int): ID пользователя.
+            cooldown_type (str): Тип кулдауна ('bomb_cd' или 'mivina_cd').
+
+        Returns:
+            bool: True, если кулдаун прошёл, иначе False.
+        """
         async with self.session() as session:
             async with session.begin():
-                stmt = select(NuclearData.bomb_cd).where(NuclearData.user_id == user_id)
-                bomb_cd = await session.scalar(stmt)
+                stmt = select(getattr(NuclearData, cooldown_type)).where(NuclearData.user_id == user_id)
+                last_time = await session.scalar(stmt)
                 await session.aclose()
 
-        if bomb_cd is not None:
-            current_time = pendulum.now().to_date_string()  # Формат YYYY-MM-DD
-            return current_time > bomb_cd
+        if last_time:
+            current_time = pendulum.now().to_date_string()
+            return current_time > last_time
 
         return True
 
 
-    async def update_bomb_cooldown(self, user_id: int) -> None:
-        """Обновляет кулдаун ядерки у пользователя."""
+    async def update_cooldown(self, user_id: int, cooldown_type: str) -> None:
+        """Обновляет кулдаун для указанного типа предмета (ядерки или мивины).
 
+        Args:
+            user_id (int): ID пользователя.
+            cooldown_type (str): Тип кулдауна ('bomb_cd' или 'mivina_cd').
+        """
         current_time = pendulum.now().to_date_string()
 
         async with self.session() as session:
@@ -55,82 +73,131 @@ class NuclearFunc():
                 user_data = await session.scalar(stmt)
 
                 if user_data:
-                    user_data.bomb_cd = current_time
+                    setattr(user_data, cooldown_type, current_time)
                     session.add(user_data)
                 else:
-                    new_user_data = NuclearData(user_id=user_id, bomb_cd=current_time)
+                    new_user_data = NuclearData(user_id=user_id, **{cooldown_type: current_time})
                     session.add(new_user_data)
 
                 await session.commit()
                 await session.aclose()
 
 
-    async def get_bomb_start_count(self, user_id: int) -> int:
-        """Получение количества запусков ядерок."""
+    async def get_start_count(self, user_id: int, column: str) -> int:
+        """Получение количества запусков (ядерки или мивинки).
+
+        Args:
+            user_id (int): айди пользователя
+            column (str): название столбца (bomb_start_count или mivina_start_count)
+
+        Returns:
+            int: количество запусков
+        """
+        if column not in ["bomb_start_count", "mivina_start_count"]:
+            raise ValueError("Некорректное имя столбца")
 
         async with self.session() as session:
             async with session.begin():
-                stmt = select(NuclearData.bomb_start_count).where(NuclearData.user_id == user_id)
-                bomb_start_count = await session.scalar(stmt)
+                stmt = select(getattr(NuclearData, column)).where(NuclearData.user_id == user_id)
+                count = await session.scalar(stmt)
                 await session.aclose()
 
-        return bomb_start_count if bomb_start_count is not None else 0
+        return count if count is not None else 0
 
 
-    async def update_bomb_start_count(self, user_id: int, count: int) -> None:
-        """Обновление количества запусков ядерок у пользователя."""
+    async def update_start_count(self, user_id: int, count: int, column: str) -> None:
+        """Обновление количества запусков (ядерки или мивинки) у пользователя.
+
+        Args:
+            user_id (int): айди пользователя
+            count (int): новое значение счётчика
+            column (str): название столбца (bomb_start_count или mivina_start_count)
+        """
+        if column not in ["bomb_start_count", "mivina_start_count"]:
+            raise ValueError("Некорректное имя столбца")
 
         async with self.session() as session:
             async with session.begin():
-                # Проверяем существование записи
                 stmt = select(NuclearData).where(NuclearData.user_id == user_id)
                 user_data = await session.scalar(stmt)
 
                 if user_data:
-                    # Обновляем значение, если запись существует
-                    user_data.bomb_start_count = count
+                    setattr(user_data, column, count)
                     session.add(user_data)
                 else:
-                    # Создаем новую запись, если её нет
-                    new_user_data = NuclearData(user_id=user_id, bomb_start_count=count)
+                    new_user_data = NuclearData(user_id=user_id, **{column: count})
                     session.add(new_user_data)
 
                 await session.commit()
                 await session.aclose()
 
 
-    async def wrote_bomb_log(self, user_id: int, user_name: str) -> None:
-        """Запись в базу данных о новой полученной ядерке."""
+    async def wrote_log(self, user_id: int, user_name: str, log_type: str) -> None:
+        """Запись в базу данных о новой полученной мивинке или ядерке.
 
-        current_time = pendulum.now().to_date_string()  # Формат YYYY-MM-DD
+        Args:
+            user_id (int): айди пользователя
+            user_name (str): ник пользователя
+            log_type (str): тип лога (bomb или mivina)
+        """
+        if log_type not in ["bomb", "mivina"]:
+            raise ValueError("Некорректный тип лога")
+
+        current_time = pendulum.now().to_date_string()
 
         async with self.session() as session:
             async with session.begin():
-                new_bomb_log = NuclearLogs(user_id=user_id, username=user_name, date=current_time, used=False, log_type="bomb")
-                session.add(new_bomb_log)
-
+                new_log = NuclearLogs(
+                    user_id=user_id,
+                    username=user_name,
+                    date=current_time,
+                    used=False,
+                    log_type=log_type
+                )
+                session.add(new_log)
                 await session.commit()
                 await session.aclose()
 
 
-    async def get_oldest_bomb_id(self, user_id: int) -> int:
-        """Получение самой старой ядерки у пользователя."""
+    async def get_oldest_weapon_id(self, user_id: int, weapon_type: str) -> int | None:
+        """Получение самой старой записи (ядерки или мивинки) у пользователя.
+
+        Args:
+            user_id (int): айди пользователя
+            weapon_type (str): тип оружия ("bomb" или "mivina")
+
+        Returns:
+            int | None: айди самой старой записи или None, если записи нет
+        """
+        if weapon_type not in ["bomb", "mivina"]:
+            raise ValueError("Некорректный тип лога")
 
         async with self.session() as session:
             async with session.begin():
-                stmt = select(NuclearLogs.id).where(NuclearLogs.user_id == user_id, NuclearLogs.used == 0, NuclearLogs.log_type == "bomb").order_by(NuclearLogs.date.asc()).limit(1)
-                oldest_bomb_id = await session.scalar(stmt)
+                stmt = (
+                    select(NuclearLogs.id)
+                    .where(NuclearLogs.user_id == user_id, NuclearLogs.used == 0, NuclearLogs.log_type == weapon_type)
+                    .order_by(NuclearLogs.date.asc())
+                    .limit(1)
+                )
+                oldest_log_id = await session.scalar(stmt)
                 await session.aclose()
 
-        return oldest_bomb_id if oldest_bomb_id is not None else 0
+        return oldest_log_id
 
 
-    async def is_bomb_activated(self, bomb_id: int) -> bool:
-        """Проверка запустится ли ядерка."""
+    async def is_weapon_activated(self, weapon_id: int) -> bool:
+        """Проверка, активируется ли оружие (ядерка или мивинка).
 
+        Args:
+            weapon_id (int): айди записи в NuclearLogs
+
+        Returns:
+            bool: True, если запись активируется, иначе False
+        """
         async with self.session() as session:
             async with session.begin():
-                stmt = select(NuclearLogs.date).where(NuclearLogs.id == bomb_id)
+                stmt = select(NuclearLogs.date).where(NuclearLogs.id == weapon_id)
                 last_time_str = await session.scalar(stmt)
                 await session.aclose()
 
@@ -138,8 +205,7 @@ class NuclearFunc():
             return False
 
         last_time = pendulum.parse(last_time_str)
-        current_time = pendulum.now()
-        days_since_received = (current_time - last_time).days
+        days_since_received = (pendulum.now() - last_time).days
 
         return should_activate_nuke(days_since_received)
 
@@ -162,12 +228,15 @@ class NuclearFunc():
 
         return should_nuke_make_hirohito(days_since_received)
 
-    async def update_bomb_log(self, bomb_id: int) -> None:
-        """Обновляет запись о конкретной ядерке, делая её использованной."""
+    async def update_log_used(self, weapon_id: int) -> None:
+        """Обновляет запись в логе, помечая оружие как использованную.
 
+        Args:
+            log_id (int): айди записи в NuclearLogs
+        """
         async with self.session() as session:
             async with session.begin():
-                stmt = update(NuclearLogs).where(NuclearLogs.id == bomb_id).values(used=1)
+                stmt = update(NuclearLogs).where(NuclearLogs.id == weapon_id).values(used=True)
                 await session.execute(stmt)
                 await session.commit()
                 await session.aclose()
@@ -179,144 +248,6 @@ class NuclearFunc():
         async with self.session() as session:
             async with session.begin():
                 stmt = update(NuclearLogs).where(NuclearLogs.user_id == user_id).values(used=1)
-                await session.execute(stmt)
-                await session.commit()
-                await session.aclose()
-# ---------------------------------------------------------------------------------------------------------------------Mivina>
-    async def check_mivina_cooldown(self, user_id: int) -> bool:
-        """Проверка кулдауна для получения мивинок. Кулдаун в 1 день."""
-
-        async with self.session() as session:
-            async with session.begin():
-                stmt = select(NuclearData.mivina_cd).where(NuclearData.user_id == user_id)
-                result = await session.execute(stmt)
-                row = result.scalar()
-
-                await session.aclose()
-
-        if row:
-            last_time = row
-            current_time = pendulum.now().strftime("%Y-%m-%d")
-            return current_time > last_time
-
-        return True
-
-
-    async def update_mivina_cooldown(self, user_id: int) -> None:
-        """Обновление кулдауна мивинки у пользователя"""
-
-        current_time = pendulum.now().strftime("%Y-%m-%d")
-
-        async with self.session() as session:
-            async with session.begin():
-                # Проверка, существует ли запись
-                stmt = select(NuclearData.mivina_cd).where(NuclearData.user_id == user_id)
-                result = await session.execute(stmt)
-                row = result.scalar()
-
-                if row:
-                    # Если запись существует - обновляем значение
-                    await session.execute(
-                        update(NuclearData).where(NuclearData.user_id == user_id).values(mivina_cd=current_time)
-                    )
-                else:
-                    # Если записи нет - создаём новую
-                    await session.execute(
-                        insert(NuclearData).values(user_id=user_id, mivina_cd=current_time)
-                    )
-
-                await session.commit()
-                await session.aclose()
-
-
-    async def get_mivina_start_count(self, user_id: int) -> int:
-        """Получение количества использований мивинки"""
-        async with self.session() as session:
-            stmt = select(NuclearData.mivina_start_count).where(NuclearData.user_id == user_id)
-            result = await session.execute(stmt)
-            row = result.scalar()
-        return row if row else 0
-
-
-    async def update_mivina_start_count(self, user_id: int, count: int) -> None:
-        """Обновление количества использования мивинок у пользователя."""
-
-        async with self.session() as session:
-            async with session.begin():
-                stmt = select(NuclearData.mivina_start_count).where(NuclearData.user_id == user_id)
-                row = await session.scalar(stmt)
-
-                if row is not None:
-                    update_stmt = (
-                        update(NuclearData)
-                        .where(NuclearData.user_id == user_id)
-                        .values(mivina_start_count=count)
-                    )
-                    await session.execute(update_stmt)
-                else:
-                    insert_stmt = NuclearData(user_id=user_id, mivina_start_count=count)
-                    session.add(insert_stmt)
-
-                await session.commit()
-                await session.aclose()
-
-
-    async def wrote_mivina_log(self, user_id: int, user_name: str) -> None:
-        """Запись в базу данных о новой полученной мивинке."""
-
-        async with self.session() as session:
-            async with session.begin():
-                new_log = NuclearLogs(
-                    user_id=user_id,
-                    username=user_name,
-                    date=pendulum.now().to_date_string(),
-                    used=False,
-                    log_type="mivina"
-                )
-                session.add(new_log)
-                await session.commit()
-                await session.aclose()
-
-
-    async def get_oldest_mivina_id(self, user_id: int) -> int | None:
-        """Получение самой старой мивинки у пользователя."""
-
-        async with self.session() as session:
-            async with session.begin():
-                stmt = select(NuclearLogs.id).where(NuclearLogs.user_id == user_id, NuclearLogs.used == 0, NuclearLogs.log_type == "mivina").order_by(NuclearLogs.date.asc()).limit(1)
-                get_oldest_mivina_id = await session.scalar(stmt)
-                await session.aclose()
-
-        return get_oldest_mivina_id if get_oldest_mivina_id is not None else None
-
-
-    async def is_mivina_activated(self, mivina_id: int) -> bool:
-        """Проверка, активируется ли мивинка."""
-
-        async with self.session() as session:
-            async with session.begin():
-                stmt = select(NuclearLogs.date).where(NuclearLogs.id == mivina_id)
-                row = await session.scalar(stmt)
-                await session.aclose()
-
-        if row:
-            last_time = pendulum.parse(row)
-            days_since_received = (pendulum.now() - last_time).days
-            return should_activate_nuke(days_since_received)
-
-        return False
-
-
-    async def update_mivina_log(self, mivina_id: int) -> None:
-        """Обновляет запись о конкретной мивинке, помечая её как использованную."""
-
-        async with self.session() as session:
-            async with session.begin():
-                stmt = (
-                    update(NuclearLogs)
-                    .where(NuclearLogs.id == mivina_id)
-                    .values(used=True)
-                )
                 await session.execute(stmt)
                 await session.commit()
                 await session.aclose()
@@ -423,8 +354,8 @@ class NuclearFunc():
         idraw.text((293, 150), num_nuc, font=num_font, fill=(0, 0, 0))
         idraw.text((1285, 150), num_miv, font=num_font, fill=(0, 0, 0))
 
-        num_nuc_start = str(await self.get_bomb_start_count(user.id))
-        num_miv_start = str(await self.get_mivina_start_count(user.id))
+        num_nuc_start = str(await self.get_start_count(user.id, "bomb_start_count"))
+        num_miv_start = str(await self.get_start_count(user.id, "mivina_start_count"))
         idraw.text((319, 290), num_nuc_start, font=num_font, fill=(0, 0, 0))
         idraw.text((1293, 290), num_miv_start, font=num_font, fill=(0, 0, 0))
         wallpaper.save("profileTemp.png")
