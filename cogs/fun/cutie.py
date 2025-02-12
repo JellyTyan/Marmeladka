@@ -1,67 +1,80 @@
 import nekos
 import lightbulb
 import hikari
+import asyncio
 
 import functions.cutie_func as cutieFunc
-from functions.anime_func import get_anime_image
+
+loader = lightbulb.Loader()
+
+group = lightbulb.Group("cutie", "Милота", dm_enabled=False)
+
+@group.register
+class FrogImage(
+    lightbulb.SlashCommand,
+    name="ква",
+    description="Ква-ква-ква"
+):
+    @lightbulb.invoke
+    async def invoke(self, ctx: lightbulb.Context) -> None:
+        frog_image_url = await cutieFunc.get_random_image(query='frog')
+
+        embed = hikari.Embed(description="Ква-ква-ква", color=0x53377A)
+        embed.set_image(frog_image_url)
+        embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+        response = await ctx.respond(embed=embed)
+        await asyncio.sleep(300)
+        await ctx.delete_response(response)
 
 
-plugin = lightbulb.Plugin("Cutie")
+@group.register
+class CatImage(
+    lightbulb.SlashCommand,
+    name="мяу",
+    description="Мяяяяяяя"
+):
+    @lightbulb.invoke
+    async def invoke(self, ctx: lightbulb.Context) -> None:
+        embed = hikari.Embed(description="Мяу-мя", color=0x53377A)
+        embed.set_image(nekos.cat())
+        embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+        response = await ctx.respond(embed=embed)
+        await asyncio.sleep(300)
+        await ctx.delete_response(response)
 
 
-@plugin.command
-@lightbulb.command("cutie", "Милота", app_command_dm_enabled=False)
-@lightbulb.implements(lightbulb.SlashCommandGroup)
-async def cute(ctx: lightbulb.Context):
-    pass
+@group.register
+class FoxImage(
+    lightbulb.SlashCommand,
+    name="фыр",
+    description="Фыр-фыр-фыр"
+):
+    @lightbulb.invoke
+    async def invoke(self, ctx: lightbulb.Context) -> None:
+        fox_image_url = await cutieFunc.get_random_fox_image()
+
+        embed = hikari.Embed(description="Фряя", color=0x53377A)
+        embed.set_image(fox_image_url)
+        embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+        response = await ctx.respond(embed=embed)
+        await asyncio.sleep(300)
+        await ctx.delete_response(response)
 
 
-@cute.child
-@lightbulb.command("ква", "Ква-ква-ква")
-@lightbulb.implements(lightbulb.SlashSubCommand)
-async def rand_frog_image(ctx: lightbulb.Context):
-    frog_image_url = await cutieFunc.get_random_image(query='frog')
-
-    embed = hikari.Embed(description="Ква-ква-ква", color=0x53377A)
-    embed.set_image(frog_image_url)
-    embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
-    await ctx.respond(embed=embed, delete_after=300)
-
-
-@cute.child
-@lightbulb.command("мяу", "Мяяяяяяя")
-@lightbulb.implements(lightbulb.SlashSubCommand)
-async def rand_cat_image(ctx: lightbulb.Context):
-    embed = hikari.Embed(description="Мяу-мя", color=0x53377A)
-    embed.set_image(nekos.cat())
-    embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
-    await ctx.respond(embed=embed)
+@group.register
+class GooseImage(
+    lightbulb.SlashCommand,
+    name="га",
+    description="Га-га-га"
+):
+    @lightbulb.invoke
+    async def invoke(self, ctx: lightbulb.Context) -> None:
+        embed = hikari.Embed(description="ГАААА", color=0x53377A)
+        embed.set_image(await cutieFunc.get_goose_image("goose"))
+        embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+        response = await ctx.respond(embed=embed)
+        await asyncio.sleep(300)
+        await ctx.delete_response(response)
 
 
-@cute.child
-@lightbulb.command("фыр", "Фыр-фыр-фыр")
-@lightbulb.implements(lightbulb.SlashSubCommand)
-async def rand_fox_image(ctx: lightbulb.Context):
-    fox_image_url = await cutieFunc.get_random_fox_image()
-
-    embed = hikari.Embed(description="Фряя", color=0x53377A)
-    embed.set_image(fox_image_url)
-    embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
-    await ctx.respond(embed=embed, delete_after=300)
-
-
-@cute.child
-@lightbulb.command("га", "Га-га-га-га")
-@lightbulb.implements(lightbulb.SlashSubCommand)
-async def rand_goose_image(ctx: lightbulb.Context):
-    embed = hikari.Embed(description="ГАААА", color=0x53377A)
-    embed.set_image(await get_anime_image("goose"))
-    embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
-    await ctx.respond(embed=embed, delete_after=300)
-
-
-def load(bot: lightbulb.BotApp):
-    bot.add_plugin(plugin)
-
-def unload(bot: lightbulb.BotApp):
-    bot.remove_plugin(plugin)
+loader.command(group)

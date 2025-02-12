@@ -35,3 +35,12 @@ async def get_random_fox_image():
                 return data['image']
             else:
                 return None
+
+async def get_goose_image(x):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f'https://nekos.life/api/v2/img/{x}') as response:
+            if response.status == 200:
+                data = await response.json()
+                return data['url']
+            else:
+                return None

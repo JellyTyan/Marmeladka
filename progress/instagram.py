@@ -10,10 +10,10 @@ import lightbulb
 from config.config_manager import ConfigManager
 from utils.create_embed import create_embed
 
-plugin = lightbulb.Plugin("InstagramNotification")
+loader = lightbulb.Loader()
 
 class InstagramNotification:
-    def __init__(self, bot: lightbulb.BotApp):
+    def __init__(self, bot: hikari.GatewayBot):
         self.bot = bot
         self.config_manager = ConfigManager()
         self.json_file = "last_post_id.json"

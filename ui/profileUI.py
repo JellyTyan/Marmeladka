@@ -1,19 +1,24 @@
 import miru
 import hikari
 
-from database.database_manager import DatabaseManager
-
-database_manager = DatabaseManager()
+from database.database_manager import DatabaseManager, UserData
+from sqlalchemy.ext.asyncio import async_sessionmaker
+from sqlalchemy import select
 
 class EditProfileButton(miru.Button):
     def __init__(self) -> None:
         super().__init__(style=hikari.ButtonStyle.PRIMARY, label="Редактировать профиль")
         self.value = True
+        self.db_manager = DatabaseManager()
+        self.session = async_sessionmaker(self.db_manager.engine, expire_on_commit=False)
 
     async def callback(self, ctx: miru.ViewContext) -> None:
         await ctx.respond_with_modal(modal=EditProfile())
 
 class EditProfile(miru.Modal, title="Редактировать профиль"):
+    def __init__(self) -> None:
+        self.db_manager = DatabaseManager()
+        self.session = async_sessionmaker(self.db_manager.engine, expire_on_commit=True)
     tag = miru.TextInput(
         label="Тэг",
         style=hikari.TextInputStyle.SHORT,
@@ -47,36 +52,20 @@ class EditProfile(miru.Modal, title="Редактировать профиль")
         bio = self.bio.value
         birth = self.birth.value
 
-        print(f"User ID: {user_id}, Tag: {tag}, Bio: {bio}, Birth: {birth}")
-
         try:
-            result = await database_manager.fetchone(
-                "SELECT tag, biography, birthday_date FROM user_data WHERE id = ?", (user_id,)
-            )
+            async with self.session() as session:
+                user = select(UserData).where(UserData.user_id == user_id)
+                user = await session.scalars(user)
+                user = user.first()
 
-            current_tag, current_bio, current_birth = result if result else (None, None, None)
+                if user is None:
+                    return
 
-            new_tag = tag if tag else current_tag
-            new_bio = bio if bio else current_bio
-            new_birth = birth if birth else current_birth
+                user.tag = tag or user.tag
+                user.biography = bio or user.biography
+                user.birthday_date = birth or user.birthday_date
 
-            if result:
-                await database_manager.execute(
-                    """
-                    UPDATE user_data
-                    SET tag = ?, biography = ?, birthday_date = ?
-                    WHERE id = ?
-                    """,
-                    (new_tag, new_bio, new_birth, user_id),
-                )
-            else:
-                await database_manager.execute(
-                    """
-                    INSERT INTO user_data (id, tag, biography, birthday_date)
-                    VALUES (?, ?, ?, ?)
-                    """,
-                    (user_id, new_tag, new_bio, new_birth),
-                )
+                await session.commit()
 
             await ctx.respond("Профиль успешно отредактирован!", flags=hikari.MessageFlag.EPHEMERAL)
         except Exception as e:

@@ -1,42 +1,68 @@
 """ Module for generating random neko pictures"""
 import hikari
 import lightbulb
+import asyncio
 
-from functions.anime_func import get_anime_image, get_waifu_image
+from functions.anime_func import get_nekos_gif
 
-plugin = lightbulb.Plugin("Nekos")
+loader = lightbulb.Loader()
 
-
-@plugin.command
-@lightbulb.command("аниме", "Анимешные картинки.", app_command_dm_enabled=False)
-@lightbulb.implements(lightbulb.SlashCommandGroup)
-async def anime(ctx: lightbulb.Context) -> None:
-    pass
+group = lightbulb.Group("аниме", "Анимешные картинки.", dm_enabled=False)
 
 
-@anime.child
-@lightbulb.command("неко", "Кошко-девочки")
-@lightbulb.implements(lightbulb.SlashSubCommand)
-async def neko(ctx: lightbulb.Context) -> None:
-    await ctx.respond(embed=await build_embed("neko"), delete_after=300)
+@group.register
+class NekoCommand(
+    lightbulb.SlashCommand,
+    name="неко",
+    description="Кошко-девочки"
+):
+
+    @lightbulb.invoke
+    async def neko(self, ctx: lightbulb.Context) -> None:
+        response = await ctx.respond(embed=await build_embed("neko"))
+        await asyncio.sleep(300)
+        await ctx.delete_response(response)
 
 
-@anime.child
-@lightbulb.command("лисы", "Лисы-девочки, да?")
-@lightbulb.implements(lightbulb.SlashSubCommand)
-async def fox_girl(ctx: lightbulb.Context) -> None:
-    await ctx.respond(embed=await build_embed("fox_girl"), delete_after=300)
+@group.register
+class FoxCommand(
+    lightbulb.SlashCommand,
+    name="лисы",
+    description="Лисы-девочки, да?"
+):
+
+    @lightbulb.invoke
+    async def fox_girl(self, ctx: lightbulb.Context) -> None:
+        response = await ctx.respond(embed=await build_embed("kitsune"))
+        await asyncio.sleep(300)
+        await ctx.delete_response(response)
 
 
-@anime.child
-@lightbulb.command("вайфу", "Ваши и не только вафу!")
-@lightbulb.implements(lightbulb.SlashSubCommand)
-async def waifu(ctx: lightbulb.Context) -> None:
-    embed = hikari.Embed(description="Вайфууу", color=0x53377A)
-    embed.set_image(await get_waifu_image())
-    embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+@group.register
+class WaifuCommand(
+    lightbulb.SlashCommand,
+    name="вайфу",
+    description="Ваши и не только вафу!"
+):
 
-    await ctx.respond(embed=embed, delete_after=300)
+    @lightbulb.invoke
+    async def waifu(self, ctx: lightbulb.Context) -> None:
+        response = await ctx.respond(embed=await build_embed("waifu"))
+        await asyncio.sleep(300)
+        await ctx.delete_response(response)
+
+@group.register
+class HusbandoCommand(
+    lightbulb.SlashCommand,
+    name="хусбандо",
+    description="Ваши и не только вафу!"
+):
+
+    @lightbulb.invoke
+    async def husbando(self, ctx: lightbulb.Context) -> None:
+        response = await ctx.respond(embed=await build_embed("husbando"))
+        await asyncio.sleep(300)
+        await ctx.delete_response(response)
 
 # @commands.command()
 # async def hentai(self, ctx, api_type=""):
@@ -77,12 +103,8 @@ async def waifu(ctx: lightbulb.Context) -> None:
 
 async def build_embed(x: str):
     embed = hikari.Embed(description="Анимееее", color=0x53377A)
-    embed.set_image(await get_anime_image(x))
+    embed.set_image(await get_nekos_gif(x))
     embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
     return embed
 
-def load(bot: lightbulb.BotApp):
-    bot.add_plugin(plugin)
-
-def unload(bot: lightbulb.BotApp):
-    bot.remove_plugin(plugin)
+loader.command(group)

@@ -1,6 +1,5 @@
 import json
 
-from hikari import embeds
 import lightbulb
 import miru
 import hikari
@@ -10,7 +9,7 @@ from ui.ticketsUI import TicketsView
 from utils.create_embed import create_embed
 
 
-async def check_info_view(bot: lightbulb.BotApp):
+async def check_info_view(bot: lightbulb.GatewayEnabledClient, cx: miru.Client):
     with open('config/hooks.json', 'r') as file:
         data = json.load(file)
 
@@ -18,12 +17,11 @@ async def check_info_view(bot: lightbulb.BotApp):
 
     info_message_id = info_channel_json["message_id"]
 
-    miru_client:miru.Client = bot.d.miru
     view = MainView()
     try:
         info_message = await bot.rest.fetch_message(info_channel_json.get("channel_id"), info_message_id)
 
-        miru_client.start_view(view, bind_to=info_message)
+        cx.start_view(view, bind_to=info_message)
 
     except hikari.NotFoundError:
         title = info_channel_json["title"]
@@ -52,10 +50,10 @@ async def check_info_view(bot: lightbulb.BotApp):
         with open('config/hooks.json', 'w') as f:
             json.dump(data, f, indent=4)
 
-        miru_client.start_view(view, bind_to=message)
+        cx.start_view(view, bind_to=message)
 
 
-async def check_ticket_view(bot: lightbulb.BotApp):
+async def check_ticket_view(bot: lightbulb.GatewayEnabledClient, cx: miru.Client):
     with open('config/hooks.json', 'r') as file:
         data = json.load(file)
 
@@ -63,12 +61,11 @@ async def check_ticket_view(bot: lightbulb.BotApp):
 
     ticket_message_id = ticket_channel_json["message_id"]
 
-    miru_client:miru.Client = bot.d.miru
     view = TicketsView()
     try:
         info_message = await bot.rest.fetch_message(ticket_channel_json.get("channel_id"), ticket_message_id)
 
-        miru_client.start_view(view, bind_to=info_message)
+        cx.start_view(view, bind_to=info_message)
 
     except hikari.NotFoundError:
         title = ticket_channel_json["title"]
@@ -97,4 +94,4 @@ async def check_ticket_view(bot: lightbulb.BotApp):
         with open('config/hooks.json', 'w') as f:
             json.dump(data, f, indent=4)
 
-        miru_client.start_view(view, bind_to=message)
+        cx.start_view(view, bind_to=message)

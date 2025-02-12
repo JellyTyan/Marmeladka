@@ -2,15 +2,16 @@ import hikari
 import lightbulb
 import pendulum
 
+# from cogs.fun.nuclear import load
 from config.config_manager import ConfigManager
 
-plugin = lightbulb.Plugin("Logging")
+loader = lightbulb.Loader()
 
 config_manager = ConfigManager()
 
 # <--------------------------------------------------### Message Events
 
-@plugin.listener(hikari.GuildMessageDeleteEvent)
+@loader.listener(hikari.GuildMessageDeleteEvent)
 async def on_message_delete(event: hikari.GuildMessageDeleteEvent) -> None:
     deleted_message = event.old_message
     if deleted_message:
@@ -41,7 +42,7 @@ async def on_message_delete(event: hikari.GuildMessageDeleteEvent) -> None:
                 await log_channel.send(embed=embed)
 
 
-@plugin.listener(hikari.GuildMessageUpdateEvent)
+@loader.listener(hikari.GuildMessageUpdateEvent)
 async def on_message_edit(event: hikari.GuildMessageUpdateEvent) -> None:
     old_message = event.old_message
     new_message = event.message
@@ -78,7 +79,7 @@ async def on_message_edit(event: hikari.GuildMessageUpdateEvent) -> None:
 
 # <--------------------------------------------------### Member events
 
-@plugin.listener(hikari.MemberCreateEvent)
+@loader.listener(hikari.MemberCreateEvent)
 async def on_member_join(event: hikari.MemberCreateEvent) -> None:
     member = event.member
 
@@ -101,7 +102,7 @@ async def on_member_join(event: hikari.MemberCreateEvent) -> None:
 
             await log_channel.send(embed=embed)
 
-@plugin.listener(hikari.MemberDeleteEvent)
+@loader.listener(hikari.MemberDeleteEvent)
 async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
     member = event.old_member
 
@@ -128,7 +129,7 @@ async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
 
 # <--------------------------------------------------### Voice events
 
-@plugin.listener(hikari.VoiceStateUpdateEvent)
+@loader.listener(hikari.VoiceStateUpdateEvent)
 async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
     before = event.old_state
     after = event.state
@@ -200,7 +201,7 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
             await log_channel.send(embed=embed)
 
 # <--------------------------------------------------### Channel Events
-@plugin.listener(hikari.GuildChannelCreateEvent)
+@loader.listener(hikari.GuildChannelCreateEvent)
 async def on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
     LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
     log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
@@ -220,7 +221,7 @@ async def on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
 
         await log_channel.send(embed=embed)
 
-@plugin.listener(hikari.GuildChannelDeleteEvent)
+@loader.listener(hikari.GuildChannelDeleteEvent)
 async def on_channel_remove(event: hikari.GuildChannelDeleteEvent) -> None:
     LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
     log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
@@ -241,7 +242,7 @@ async def on_channel_remove(event: hikari.GuildChannelDeleteEvent) -> None:
         await log_channel.send(embed=embed)
 
 # <--------------------------------------------------### Role Events
-@plugin.listener(hikari.RoleCreateEvent)
+@loader.listener(hikari.RoleCreateEvent)
 async def on_role_create(event: hikari.RoleCreateEvent) -> None:
     LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
     log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
@@ -261,7 +262,7 @@ async def on_role_create(event: hikari.RoleCreateEvent) -> None:
 
         await log_channel.send(embed=embed)
 
-@plugin.listener(hikari.RoleDeleteEvent)
+@loader.listener(hikari.RoleDeleteEvent)
 async def on_role_remove(event: hikari.RoleDeleteEvent) -> None:
     LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
     log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
@@ -281,15 +282,11 @@ async def on_role_remove(event: hikari.RoleDeleteEvent) -> None:
 
         await log_channel.send(embed=embed)
 
-@plugin.listener(lightbulb.CommandErrorEvent)
-async def on_command_error(event: lightbulb.CommandErrorEvent) -> None:
-    if isinstance(event.exception, lightbulb.CommandIsOnCooldown):
-        retry_after = event.exception.retry_after
-        await event.context.respond(f"Подожди ещё {retry_after:.1f} секунд перед использованием этой команды!", flags=hikari.MessageFlag.EPHEMERAL)
 
-
-def load(bot: lightbulb.BotApp):
-    bot.add_plugin(plugin)
-
-def unload(bot: lightbulb.BotApp):
-    bot.remove_plugin(plugin)
+@loader.error_handler
+async def handler(exc: lightbulb.exceptions.ExecutionPipelineFailedException) -> bool:
+    for x in exc.hook_failures:
+        if isinstance(x, lightbulb.prefab.OnCooldown):
+            await exc.context.respond(f"You are on Cooldown. Wait {x} seconds", flags=hikari.MessageFlag.EPHEMERAL)
+            return True
+    return False

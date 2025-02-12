@@ -1,39 +1,82 @@
-import aiosqlite
-from typing import Any, List, Tuple, Optional
+import logging
+
+from sqlalchemy import Boolean, Integer, String
+from sqlalchemy.ext.asyncio import (
+    AsyncAttrs,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class Base(AsyncAttrs, DeclarativeBase):
+    pass
+
+class UserData(Base):
+    __tablename__ = "user_data"
+
+    user_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String(20), nullable=True)
+    message_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    invite_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    voice_time: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    bump_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    tag: Mapped[str] = mapped_column(String(50), nullable=True)
+    biography: Mapped[str] = mapped_column(String(50), nullable=True)
+    birthday_date: Mapped[str] = mapped_column(String(50), nullable=True)
+
+class NuclearData(Base):
+    __tablename__ = "nuclear_data"
+
+    user_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String(20), nullable=True)
+    new_user: Mapped[int] = mapped_column(Boolean, nullable=False, default=True)
+    nuclear_mode: Mapped[int] = mapped_column(Boolean, nullable=False, default=False)
+    bomb_start_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    mivina_start_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    bomb_cd: Mapped[str] = mapped_column(String(50), nullable=True, default="")
+    mivina_cd: Mapped[str] = mapped_column(String(50), nullable=True, default="")
+
+class NuclearLogs(Base):
+    __tablename__ = "nuclear_logs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    username: Mapped[str] = mapped_column(String(20), nullable=True)
+    date: Mapped[str] = mapped_column(String(50), nullable=True)
+    used: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    log_type: Mapped[str] = mapped_column(String(10), nullable=False)
+
 
 class DatabaseManager:
-    def __init__(self, db_path: str = "./database/database.sql"):
-        self.db_path = db_path
+    _instance = None
 
-    async def execute(self, query: str, params: Optional[Tuple[Any, ...]] = None) -> None:
-        """Выполняет запрос без возврата данных (например, INSERT, UPDATE, DELETE)."""
-        async with aiosqlite.connect(self.db_path) as db:
-            await db.execute(query, params or ())
-            await db.commit()
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(DatabaseManager, cls).__new__(cls)
+            cls._instance._initialized = False
+        return cls._instance
 
-    async def fetchone(self, query: str, params: Optional[Tuple[Any, ...]] = None) -> Optional[Tuple[Any, ...]]:
-        """Выполняет запрос и возвращает одну запись в виде кортежа."""
-        async with aiosqlite.connect(self.db_path) as db:
-            db.row_factory = aiosqlite.Row  # Устанавливаем row_factory для управления форматом
-            cursor = await db.execute(query, params or ())
-            row = await cursor.fetchone()
-            await cursor.close()
-            return tuple(row) if row else None  # Преобразуем Row в кортеж
+    def __init__(self, db_url: str = "sqlite+aiosqlite:///database/database.sql", echo: bool = True):
+        if self._initialized:
+            return
 
-    async def fetchall(self, query: str, params: Optional[Tuple[Any, ...]] = None) -> List[Tuple[Any, ...]]:
-        """Выполняет запрос и возвращает все записи."""
-        async with aiosqlite.connect(self.db_path) as db:
-            cursor = await db.execute(query, params or ())
-            rows = await cursor.fetchall()
-            results = [tuple(row) for row in rows]
-            await cursor.close()
-            return results
+        self.db_url = db_url
+        self.echo = echo
+        self.engine = create_async_engine(self.db_url, echo=self.echo)
+        logger.info("Подключение к базе данных успешно")
+        self._initialized = True
 
-    async def create_table(self, table_name: str, schema: str) -> None:
-        """
-        Создает таблицу, если она не существует.
-        :param table_name: Имя таблицы.
-        :param schema: Схема таблицы (например, 'id INTEGER PRIMARY KEY, name TEXT').
-        """
-        query = f"CREATE TABLE IF NOT EXISTS {table_name} ({schema})"
-        await self.execute(query)
+    async def init_db(self):
+        """Creates tables if they do not exist"""
+        async with self.engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("База данных инициализирована")
+
+    async def close(self):
+        """Closes the database connection"""
+        await self.engine.dispose()
+        logger.info("Подключение к базе данных закрыто")

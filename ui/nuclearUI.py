@@ -5,9 +5,11 @@ import hikari
 
 from datetime import datetime, timedelta, timezone
 
-import functions.nuclear_func as nuclearFunc
+from functions.nuclear_func import NuclearFunc
 from utils.create_embed import create_embed
 from utils.get_random_gif import get_random_gif
+
+nuclear_func = NuclearFunc()
 
 
 def similar(a, b):
@@ -37,7 +39,7 @@ class NuclearCase(miru.Modal, title="Впиши код-фразу и в кейс
 
         # Сравниваем сообщение с ключевой фразой
         if similar(codeword.lower(), target_phrase_bomb.lower()) > similarity_threshold:
-            nuclear_mode = await nuclearFunc.get_nuclear_mode(user_id)
+            nuclear_mode = await nuclear_func.get_nuclear_mode(user_id)
             if nuclear_mode == 0:
                 embedDecline = create_embed(
                     description="Вы увидели перед собой кейс. На нём было написано: 'Впиши код-фразу и в кейсе появится арсенал'.\n\nВы ввели кодовое слово, но кейс превратился в слово 'Отклонено'. Кажется стоит включить ядерный режим..."
@@ -46,10 +48,10 @@ class NuclearCase(miru.Modal, title="Впиши код-фразу и в кейс
                 return
 
             # Проверяем КД
-            if await nuclearFunc.check_bomb_cooldown(user_id):
+            if await nuclear_func.check_bomb_cooldown(user_id):
                 # Увеличиваем количество пультов и обновляем количевство в БД
-                await nuclearFunc.update_bomb_cooldown(user_id)
-                await nuclearFunc.wrote_bomb_log(user_id, ctx.author.username)
+                await nuclear_func.update_bomb_cooldown(user_id)
+                await nuclear_func.wrote_bomb_log(user_id, ctx.author.username)
 
                 # Уведомляем о успешном обновлении кол-во и чистим сообщения
 
@@ -71,7 +73,7 @@ class NuclearCase(miru.Modal, title="Впиши код-фразу и в кейс
 
         # Пользователь хочет получить мивину
         elif (similar(codeword.lower(), target_phrase_mivina.lower()) > similarity_threshold):
-            nuclear_mode = await nuclearFunc.get_nuclear_mode(user_id)
+            nuclear_mode = await nuclear_func.get_nuclear_mode(user_id)
             if nuclear_mode == 0:
                 embedDecline = create_embed(
                     description="Вы увидели перед собой кейс. На нём было написано: 'Впиши код-фразу и в кейсе появится арсенал'.\n\nВы ввели кодовое слово, но кейс превратился в слово 'Отклонено'. Кажется стоит включить ядерный режим..."
@@ -80,12 +82,12 @@ class NuclearCase(miru.Modal, title="Впиши код-фразу и в кейс
                 return
 
             # Проверяем КД
-            if await nuclearFunc.check_mivina_cooldown(user_id):
+            if await nuclear_func.check_mivina_cooldown(user_id):
                 # Обновляем КД
 
                 # Увеличиваем количество мивинок и обновляем БД
-                await nuclearFunc.update_mivina_cooldown(user_id)
-                await nuclearFunc.wrote_mivina_log(user_id, ctx.author.username)
+                await nuclear_func.update_mivina_cooldown(user_id)
+                await nuclear_func.wrote_mivina_log(user_id, ctx.author.username)
 
                 # Уведомляем о успешком обновление кол-во и чистим сообщения
                 embedSuccesed = create_embed(
@@ -123,7 +125,7 @@ class TurnOnNuclear(miru.Button):
         self.value = True
 
     async def callback(self, ctx: miru.ViewContext) -> None:
-        await nuclearFunc.update_nuclear_mode(ctx.author.id, 1)
+        await nuclear_func.update_nuclear_mode(ctx.author.id, 1)
         await ctx.respond("Ядерный режим включён!", flags=hikari.MessageFlag.EPHEMERAL)
         self.view.stop()
 
@@ -158,8 +160,8 @@ class AcceptButton(miru.Button):
         self.value = True
 
     async def callback(self, ctx: miru.ViewContext) -> None:
-        await nuclearFunc.update_nuclear_mode(ctx.author.id, 0)
-        await nuclearFunc.reset_bombs(ctx.author.id)
+        await nuclear_func.update_nuclear_mode(ctx.author.id, 0)
+        await nuclear_func.reset_bombs(ctx.author.id)
         await ctx.respond("Спасибо за пользование системой Ядерка. Мы ждём вашего возвращения, Генерал!", flags=hikari.MessageFlag.EPHEMERAL)
         self.view.stop()
 
@@ -173,18 +175,18 @@ class SelfBombActivate(miru.Button):
         self.value = True
 
     async def callback(self, ctx: miru.ViewContext) -> None:
-        oldest_bomb_id = await nuclearFunc.get_oldest_bomb_id(ctx.author.id)
+        oldest_bomb_id = await nuclear_func.get_oldest_bomb_id(ctx.author.id)
         guild = ctx.get_guild()
         if guild is None:
             return
 
-        if await nuclearFunc.is_bomb_activated(oldest_bomb_id):
+        if await nuclear_func.is_bomb_activated(oldest_bomb_id):
             await ctx.client.rest.edit_member(guild, ctx.author, communication_disabled_until=datetime.now(timezone.utc) + timedelta(seconds=300), reason="bomb")
             embed = create_embed(
                 description=f"Ладно...\n{ctx.author.mention}\n**У тебя прилёт от**\n{ctx.author.mention}",
                 image_url=get_random_gif("bomb_self")
             )
-            await nuclearFunc.update_bomb_log(oldest_bomb_id)
+            await nuclear_func.update_bomb_log(oldest_bomb_id)
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.NONE)
             return
         else:
@@ -192,7 +194,7 @@ class SelfBombActivate(miru.Button):
                 description="Упс. Ядерка не сработала. Кажется она слишком старая.",
                 image_url="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDFlNTZoYXNjM21ta2FrbTZoN3E3MjNkMnhraGxhazJtaW42NjJ0ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qkf7qxSEUqNCataNjK/giphy.gif"
             )
-            await nuclearFunc.update_bomb_log(oldest_bomb_id)
+            await nuclear_func.update_bomb_log(oldest_bomb_id)
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.NONE)
             return
         self.view.stop()

@@ -6,10 +6,10 @@ from config.config_manager import ConfigManager
 
 config_manager = ConfigManager()
 
-plugin = lightbulb.Plugin("UkrTrain")
+loader = lightbulb.Loader()
 
 
-@plugin.listener(hikari.MemberCreateEvent)
+@loader.listener(hikari.MemberCreateEvent)
 async def on_member_join(event: hikari.MemberCreateEvent) -> None:
     member = event.member
 
@@ -45,7 +45,7 @@ async def on_member_join(event: hikari.MemberCreateEvent) -> None:
             return
 
 
-@plugin.listener(hikari.MemberDeleteEvent)
+@loader.listener(hikari.MemberDeleteEvent)
 async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
     member = event.old_member
 
@@ -65,9 +65,3 @@ async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
             image_url="https://cdn.discordapp.com/attachments/1109526498299359303/1138139334550241291/gman-toes.gif"
         )
         await ukr_channel.send(embed=embed)
-
-def load(bot: lightbulb.BotApp):
-    bot.add_plugin(plugin)
-
-def unload(bot: lightbulb.BotApp):
-    bot.remove_plugin(plugin)

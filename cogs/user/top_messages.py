@@ -1,43 +1,57 @@
 import hikari
 import lightbulb
 
-from database.database_manager import DatabaseManager
+from database.database_manager import DatabaseManager, UserData
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
 database_manager = DatabaseManager()
 
-plugin = lightbulb.Plugin("TopMessages")
+loader = lightbulb.Loader()
 
 
-@plugin.command
-@lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.command("топ-сообщений", "Топ пользователей по сообщениям.", app_command_dm_enabled=False)
-@lightbulb.implements(lightbulb.SlashCommand)
-async def top_messages(ctx: lightbulb.Context) -> None:
-    top_users_list = await database_manager.fetchall("SELECT id, message_count FROM user_data ORDER BY message_count DESC LIMIT 10")
+@loader.command
+class NekoCommand(
+    lightbulb.SlashCommand,
+    name="топ-сообщений",
+    description="Топ пользователей по сообщениям.",
+    dm_enabled=False
+):
 
-    title = "**Топ 10 пользователей по количеству сообщений на сервере:**\n\n"
+    @lightbulb.invoke
+    async def top_messages(self, ctx: lightbulb.Context) -> None:
+        session = async_sessionmaker(database_manager.engine, expire_on_commit=False)
+        async with session() as session:
+            stmt = select(UserData).order_by(UserData.message_count.desc()).limit(10)
+            top_users_list = await session.scalars(stmt)
+            await session.aclose()
 
-    guild = ctx.get_guild()
-    if guild is None:
-        return
+        title = "**Топ 10 пользователей по количеству сообщений на сервере:**\n\n"
 
-    for index, user in enumerate(top_users_list, start=1):
-        user_id, message_count = user
-        if message_count == 0:
-            continue
+        guild_id = ctx.guild_id
+        if guild_id is None:
+            return
 
-        member = guild.get_member(user_id)
-        if member is not None:
-            user_ping = member.mention
-        else:
-            user_ping = f"<@{user_id}>"
-        title += f"{index}. `{message_count} сообщений` - {user_ping}\n"
-    embed = hikari.Embed(description=title, color=0x2b2d31)
+        guild = await ctx.client.rest.fetch_guild(guild_id)
+        if guild is None:
+            return
 
-    await ctx.respond(embed=embed)
+        for index, user in enumerate(top_users_list, start=1):
+            if user.message_count == 0:
+                continue
+
+            member = guild.get_member(user.user_id)
+            if member is not None:
+                user_ping = member.mention
+            else:
+                user_ping = f"<@{user.user_id}>"
+            title += f"{index}. `{user.message_count} сообщений` - {user_ping}\n"
+        embed = hikari.Embed(description=title, color=0x2b2d31)
+
+        await ctx.respond(embed=embed)
 
 
-@plugin.listener(hikari.MessageCreateEvent)
+@loader.listener(hikari.GuildMessageCreateEvent)
 async def on_message(event: hikari.MessageCreateEvent):
     if not event.message.attachments:
         if not event.author.is_bot:
@@ -50,19 +64,24 @@ async def on_message(event: hikari.MessageCreateEvent):
             await update_message_count(event.author.id, event.author.username)
 
 
-async def update_message_count(user_id: int, username: str):
-    row = await database_manager.fetchone("SELECT message_count FROM user_data WHERE id = ?", (user_id,))
+async def update_message_count(user_id: int, username: str) -> None:
+    """Обновляет количество сообщений пользователя.
 
-    if row:
-        message_count = row[0] + 1
-        await database_manager.execute("UPDATE user_data SET username = ?, message_count = ? WHERE id = ?",(username, message_count, user_id))
-    else:
-        message_count = 1
-        await database_manager.execute("INSERT INTO user_data (id, username, message_count) VALUES (?, ?, ?)",(user_id, username, message_count))
+    Args:
+        user_id (int): ID пользователя
+        username (str): Имя пользователя
+    """
+    session = async_sessionmaker(database_manager.engine, expire_on_commit=True)
+    async with session() as session:
+        async with session.begin():
+            stmt = select(UserData).where(UserData.user_id == user_id)
+            row = await session.scalar(stmt)
 
+            if row:
+                row.username = username
+                row.message_count += 1
+            else:
+                session.add(UserData(id=user_id, username=username, message_count=1))
 
-def load(bot: lightbulb.BotApp):
-    bot.add_plugin(plugin)
-
-def unload(bot: lightbulb.BotApp):
-    bot.remove_plugin(plugin)
+            await session.commit()
+            await session.aclose()

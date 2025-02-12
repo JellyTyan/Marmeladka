@@ -2,44 +2,58 @@ import hikari
 import lightbulb
 import pendulum
 
-from database.database_manager import DatabaseManager
+from database.database_manager import DatabaseManager, UserData
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
 database_manager = DatabaseManager()
 
-plugin = lightbulb.Plugin("TopVoice")
+loader = lightbulb.Loader()
 
 voice_start_times = {}
 
-@plugin.command
-@lightbulb.add_checks(lightbulb.guild_only)
-@lightbulb.command("топ-войса", "Топ пользователей по длительности нахождения в гс.", app_command_dm_enabled=False)
-@lightbulb.implements(lightbulb.SlashCommand)
-async def top_voice(ctx: lightbulb.Context) -> None:
-    top_users_list = await database_manager.fetchall("SELECT id, voice_time FROM user_data ORDER BY voice_time DESC LIMIT 10")
+@loader.command
+class NekoCommand(
+    lightbulb.SlashCommand,
+    name="топ-войса",
+    description="Топ пользователей по длительности нахождения в гс.",
+    dm_enabled=False
+):
 
-    title = "**Топ 10 пользователей по длительности нахождения в голосовых каналах:**\n\n"
+    @lightbulb.invoke
+    async def top_voice(self, ctx: lightbulb.Context) -> None:
+        session = async_sessionmaker(database_manager.engine, expire_on_commit=False)
+        async with session() as session:
+            stmt = select(UserData).order_by(UserData.voice_time.desc()).limit(10)
+            top_users_list = await session.scalars(stmt)
+            await session.aclose()
 
-    guild = ctx.get_guild()
-    if guild is None:
-        return
+        title = "**Топ 10 пользователей по длительности нахождения в голосовых каналах:**\n\n"
 
-    for index, user in enumerate(top_users_list, start=1):
-        user_id, voice_time = user
-        if voice_time == 0:
-            continue
+        guild_id = ctx.guild_id
+        if guild_id is None:
+            return
 
-        voice_time = format_duration(voice_time)
-        member = guild.get_member(user_id)
-        if member is not None:
-            user_ping = member.mention
-        else:
-            user_ping = f"<@{user_id}>"
-        title += f"{index}. `{voice_time}` - {user_ping}\n"
-    embed = hikari.Embed(description=title, color=0x2B2D31)
-    await ctx.respond(embed=embed)
+        guild = await ctx.client.rest.fetch_guild(guild_id)
+        if guild is None:
+            return
+
+        for index, user in enumerate(top_users_list, start=1):
+            if user.voice_time == 0:
+                continue
+
+            voice_time = format_duration(user.voice_time)
+            member = guild.get_member(user.user_id)
+            if member is not None:
+                user_ping = member.mention
+            else:
+                user_ping = f"<@{user.user_id}>"
+            title += f"{index}. `{voice_time}` - {user_ping}\n"
+        embed = hikari.Embed(description=title, color=0x2B2D31)
+        await ctx.respond(embed=embed)
 
 
-@plugin.listener(hikari.VoiceStateUpdateEvent)
+@loader.listener(hikari.VoiceStateUpdateEvent)
 async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
     before = event.old_state
     after = event.state
@@ -63,14 +77,27 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
 
 
 async def update_voice_time(user_id: int, username: str, duration: int) -> None:
-    row = await database_manager.fetchone("SELECT voice_time FROM user_data WHERE id = ?", (user_id,))
+    """Обновляет время голосового общения пользователя.
 
-    if row:
-        user_voice_time = row[0] + duration
-        await database_manager.execute("UPDATE user_data SET username = ?, voice_time = ? WHERE id = ?",(username, user_voice_time, user_id),)
-    else:
-        user_voice_time = duration
-        await database_manager.execute("INSERT INTO user_data (id, username, voice_time) VALUES (?, ?, ?)",(user_id, username, user_voice_time),)
+    Args:
+        user_id (int): ID пользователя
+        username (str): Имя пользователя
+        duration (int): Длительность в секундах
+    """
+    session = async_sessionmaker(database_manager.engine, expire_on_commit=True)
+    async with session() as session:
+        async with session.begin():
+            stmt = select(UserData).where(UserData.user_id == user_id)
+            row = await session.scalar(stmt)
+
+            if row:
+                row.username = username
+                row.voice_time += duration
+            else:
+                session.add(UserData(id=user_id, username=username, voice_time=duration))
+
+            await session.commit()
+            await session.aclose()
 
 
 def format_duration(seconds):
@@ -78,10 +105,3 @@ def format_duration(seconds):
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-
-
-def load(bot: lightbulb.BotApp):
-    bot.add_plugin(plugin)
-
-def unload(bot: lightbulb.BotApp):
-    bot.remove_plugin(plugin)
