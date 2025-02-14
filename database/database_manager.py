@@ -3,8 +3,6 @@ import logging
 from sqlalchemy import Boolean, Integer, String
 from sqlalchemy.ext.asyncio import (
     AsyncAttrs,
-    AsyncSession,
-    async_sessionmaker,
     create_async_engine,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -60,7 +58,7 @@ class DatabaseManager:
             cls._instance._initialized = False
         return cls._instance
 
-    def __init__(self, db_url: str = "sqlite+aiosqlite:///database/database.sql", echo: bool = True):
+    def __init__(self, db_url: str = "sqlite+aiosqlite:///database/database.sql", echo: bool = False):
         if self._initialized:
             return
 

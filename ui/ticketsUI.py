@@ -19,7 +19,7 @@ class TicketsView(miru.View):
 class QuetionButton(miru.Button):
     def __init__(self):
         super().__init__(
-            label="Задать вопрос",
+            label="Ask a question",
             style=hikari.ButtonStyle.PRIMARY,
             custom_id="question_button",
         )
@@ -27,11 +27,11 @@ class QuetionButton(miru.Button):
     async def callback(self, ctx: miru.ViewContext) -> None:
         await ctx.respond_with_modal(modal=QuetionModal())
 
-class QuetionModal(miru.Modal, title="Задай вопрос"):
+class QuetionModal(miru.Modal, title="Ask a question"):
     question = miru.TextInput(
-        label="Вопросик",
+        label="Your question",
         style=hikari.TextInputStyle.PARAGRAPH,
-        placeholder="В кратце опиши свой вопрос. Ты ограничен!",
+        placeholder="Briefly describe your question. You're limited!",
         custom_id="input",
         required=True,
     )
@@ -61,14 +61,14 @@ class QuetionModal(miru.Modal, title="Задай вопрос"):
             thread: hikari.GuildThreadChannel = await ctx.client.rest.create_thread(
                 ticket_channel.id,
                 hikari.ChannelType.GUILD_PRIVATE_THREAD,
-                f"Тикет {ticket_count}",
+                f"Ticket {ticket_count}",
                 invitable=False,
                 auto_archive_duration=1440,
             )
 
             embedWelcome = create_embed(
-                title="Вопрос от пользователя",
-                description=f'Всех приветствую! Мы все тут собрались для обсуждения животрепещущего вопроса от {ctx.author.display_name}:\n\n```{self.question.value}```',
+                title="Question from a user",
+                description=f'Greetings, everyone! We\'re all here to discuss the burning question from {ctx.author.display_name}:\n\n```{self.question.value}```',
                 color=0xA020F0,
             )
 
@@ -77,7 +77,7 @@ class QuetionModal(miru.Modal, title="Задай вопрос"):
 
             await thread.send(content=staff_role.mention, embed=embedWelcome, components=view, role_mentions=True)
 
-            await ctx.respond(f"Ваш вопрос отправлен в тикет {thread.mention}", flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond(f"Your question has been sent to ticket {thread.mention}", flags=hikari.MessageFlag.EPHEMERAL)
 
             ctx.client.start_view(view)
 
@@ -87,7 +87,7 @@ class CloseThreadButton(miru.Button):
     def __init__(self) -> None:
         super().__init__(
             style=hikari.ButtonStyle.DANGER,
-            label="Закрыть ветку",
+            label="Close the ticket",
         )
         self.value = True
 
@@ -95,13 +95,13 @@ class CloseThreadButton(miru.Button):
         view = miru.View()
         view.add_item(AcceptButton())
 
-        await ctx.respond("Вы уверены, что вопросов больше не осталось?", components=view)
+        await ctx.respond("Are you sure there are no more questions?", components=view)
 
         ctx.client.start_view(view)
 
 class AcceptButton(miru.Button):
     def __init__(self) -> None:
-        super().__init__(style=hikari.ButtonStyle.SUCCESS, label="Согласен")
+        super().__init__(style=hikari.ButtonStyle.SUCCESS, label="Accept")
         self.value = True
 
     async def callback(self, ctx: miru.ViewContext) -> None:
@@ -111,7 +111,7 @@ class AcceptButton(miru.Button):
             print("not thread")
             return
 
-        await ctx.respond("Спасибо вам!")
+        await ctx.respond("Thank you!")
 
         await ctx.client.rest.remove_thread_member(thread, ctx.author)
 
@@ -119,7 +119,7 @@ class AcceptButton(miru.Button):
 class PropositionButton(miru.Button):
     def __init__(self):
         super().__init__(
-            label="Предложить",
+            label="Suggest",
             style=hikari.ButtonStyle.SUCCESS,
             custom_id="proposition_button",
         )
@@ -128,11 +128,11 @@ class PropositionButton(miru.Button):
     async def callback(self, ctx: miru.ViewContext):
         await ctx.respond_with_modal(modal=PropositionModal())
 
-class PropositionModal(miru.Modal, title="Задай вопрос"):
+class PropositionModal(miru.Modal, title="Suggest"):
     proposition = miru.TextInput(
-        label="Предложение",
+        label="Your suggestion",
         style=hikari.TextInputStyle.PARAGRAPH,
-        placeholder="Начирикай что-нить",
+        placeholder="Write something...",
         custom_id="input",
         required=True,
     )
@@ -143,20 +143,20 @@ class PropositionModal(miru.Modal, title="Задай вопрос"):
 
         if isinstance(proposition_channel, hikari.TextableGuildChannel):
             proposition_embed = create_embed(
-                title="Предложение от пользователя",
-                description=f'**{ctx.author.mention}**: ```{self.proposition}```',
+                title="Suggestion from user",
+                description=f'**{ctx.author.mention}**: ```{self.proposition.value}```',
                 color=0xA020F0,
             )
 
             await proposition_channel.send(embed=proposition_embed)
 
-        await ctx.respond("Спасибо за ваше предложение!!")
+        await ctx.respond("Thank you for your suggestion!!", flags=hikari.MessageFlag.EPHEMERAL)
 
 
 class ReportButton(miru.Button):
     def __init__(self):
         super().__init__(
-            label="Пожаловаться",
+            label="Report",
             style=hikari.ButtonStyle.DANGER,
             custom_id="report_button",
         )
@@ -164,11 +164,11 @@ class ReportButton(miru.Button):
     async def callback(self, ctx: miru.ViewContext) -> None:
         await ctx.respond_with_modal(modal=ReportModal())
 
-class ReportModal(miru.Modal, title="Пожалуйся"):
+class ReportModal(miru.Modal, title="Write yor report"):
     report = miru.TextInput(
-        label="Жалоба",
+        label="Report",
         style=hikari.TextInputStyle.PARAGRAPH,
-        placeholder="В кратце опиши свой вопрос. Ты ограничен!",
+        placeholder="In 2 words describe your report...",
         custom_id="report_input",
         required=False,
     )
@@ -179,9 +179,11 @@ class ReportModal(miru.Modal, title="Пожалуйся"):
 
         if isinstance(report_channel, hikari.TextableGuildChannel):
             report_embed = create_embed(
-                title="Жалоба",
-                description=f'**{ctx.author.mention}**: ```{self.report}```',
+                title="Report",
+                description=f'**{ctx.author.mention}**: ```{self.report.value}```',
                 color=0xA020F0,
             )
 
             await report_channel.send(embed=report_embed)
+
+        await ctx.respond("Thank you for your report!!", flags=hikari.MessageFlag.EPHEMERAL)

@@ -44,15 +44,6 @@ async def on_member_remove(event: hikari.MemberDeleteEvent):
         await session.delete(user)
         await session.commit()
 
-# @commands.Cog.listener()
-# async def on_member_update(self, before: disnake.Member, after: disnake.Member):
-#     try:
-#         if after.current_timeout is None:
-#             nuclear_role = after.guild.get_role(NUCLEAR_ROLE)
-#             await after.remove_roles(nuclear_role)
-#     except Exception:
-#         return
-
 
 @loader.command
 class SuicideCommand(
