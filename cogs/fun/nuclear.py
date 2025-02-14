@@ -310,6 +310,10 @@ class StartMivinaCommand(
             await ctx.respond("Мивинки закончились, Генерал! К сожалению, ничем помочь не могу!", flags=hikari.MessageFlag.NONE)
             return
 
+        if member.communication_disabled_until() is None:
+            await ctx.respond("Сер, вы в порядке!", flags=hikari.MessageFlag.NONE)
+            return
+
         mivina_channel_id = config_manager.get_config_value("MIVINA_CHANNEL_ID")
         marmelad_channel = await ctx.client.rest.fetch_channel(int(mivina_channel_id))
         if not isinstance(marmelad_channel, hikari.TextableGuildChannel):
