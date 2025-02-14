@@ -55,7 +55,7 @@ class WaifuCommand(
 class HusbandoCommand(
     lightbulb.SlashCommand,
     name="хусбандо",
-    description="Ваши и не только вафу!"
+    description="Ваши и не только мужчины!"
 ):
 
     @lightbulb.invoke

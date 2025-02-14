@@ -22,7 +22,7 @@ class NekoCommand(
 
     @lightbulb.invoke
     async def user_profile(self, ctx: lightbulb.Context) -> None:
-        print(self.user)
+        await ctx.defer(ephemeral=False)
         user = self.user or ctx.user
 
         profile_image = Image.open('src/img/userProfile.png')

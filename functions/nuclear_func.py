@@ -341,7 +341,7 @@ class NuclearFunc():
 
         idraw = ImageDraw.Draw(wallpaper)
         nickname_font = ImageFont.truetype("src/fonts/nuclear.ttf", size=50)
-        num_font = ImageFont.truetype("src/fontspip install sqlalchemy[asyncio]/nuclear.ttf", size=50)
+        num_font = ImageFont.truetype("src/fonts/nuclear.ttf", size=50)
 
         text = user.username
         text_width = idraw.textlength(text, font=nickname_font)

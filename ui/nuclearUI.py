@@ -1,15 +1,17 @@
+import time
+from datetime import datetime, timedelta, timezone
 from difflib import SequenceMatcher
 
-import miru
 import hikari
-
-from datetime import datetime, timedelta, timezone
+import miru
 
 from functions.nuclear_func import NuclearFunc
 from utils.create_embed import create_embed
 from utils.get_random_gif import get_random_gif
 
 nuclear_func = NuclearFunc()
+
+cooldowns = {}
 
 
 def similar(a, b):
@@ -139,6 +141,22 @@ class TurnOffNuclear(miru.Button):
         self.value = True
 
     async def callback(self, ctx: miru.ViewContext) -> None:
+        user_id = ctx.user.id
+        now = time.time()
+        cooldown = 12 * 60 * 60
+
+        last_used = cooldowns.get(user_id, 0)
+        if now - last_used < cooldown:
+            remaining = int(cooldown - (now - last_used))
+            hours, minutes = divmod(remaining // 60, 60)
+            await ctx.respond(
+                f"Вы уже выключали ядерку! Подождите {hours}ч {minutes}м.",
+                flags=hikari.MessageFlag.EPHEMERAL
+            )
+            return
+
+        cooldowns[user_id] = now
+
         view = miru.View()
         view.add_item(AcceptButton())
 
@@ -148,7 +166,6 @@ class TurnOffNuclear(miru.Button):
         )
 
         await ctx.respond(embed=embed, components=view, flags=hikari.MessageFlag.EPHEMERAL)
-
         ctx.client.start_view(view)
 
 class AcceptButton(miru.Button):

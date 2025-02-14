@@ -94,6 +94,7 @@ class ArsenalCommand(
 ):
     @lightbulb.invoke
     async def arsenal(self, ctx: lightbulb.Context, cx: miru.Client) -> None:
+        await ctx.defer(ephemeral=True)
         user = ctx.user
 
         # Если пользователь новый, то отправляем вспомонательный эмбед
@@ -120,7 +121,7 @@ class ArsenalCommand(
 
             navigator = nav.NavigatorView(pages=embeds, items=items)
 
-            builder = await navigator.build_response_async(cx)
+            builder = await navigator.build_response_async(cx, ephemeral=True)
             await builder.create_initial_response(ctx.interaction)
 
             cx.start_view(navigator)
@@ -161,7 +162,6 @@ class StartBombCommand(
 
     @lightbulb.invoke
     async def start_bomb(self, ctx: lightbulb.Context) -> None:
-        await ctx.defer(ephemeral=True)
         target_user = self.user
         nuclear_name = self.name
 
@@ -171,7 +171,7 @@ class StartBombCommand(
         if not ctx.guild_id:
             return
 
-        guild = await ctx.client.rest.fetch_guild(ctx.guild_id)
+        guild = ctx.interaction.get_guild()
         if not guild:
             return
 
@@ -184,23 +184,23 @@ class StartBombCommand(
         # Проверка на ядерный режим автора
         author_nuclear_mode = await nuclear_func.get_nuclear_mode(author.id)
         if author_nuclear_mode == 0:
-            await ctx.respond("У вас отключён ядерный режим!", flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond("У вас отключён ядерный режим!", ephemeral=True)
             return
         # Проверка на наличие ядерок
         bombs_count = await nuclear_func.get_weapon_count(author.id, nuclear_type="bomb")
         oldest_bomb_id = await nuclear_func.get_oldest_weapon_id(author.id, weapon_type="bomb")
         if bombs_count and bombs_count <= 0 or oldest_bomb_id is None:
-            await ctx.respond("Ваш ядерный арсенал пуст, Генерал!", flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond("Ваш ядерный арсенал пуст, Генерал!", ephemeral=True)
             return
 
         # Проверка на ядерный режим цели
         target_nuclear_mode = await nuclear_func.get_nuclear_mode(target_member.id)
         if target_nuclear_mode == 0:
-            await ctx.respond("У вашей цели отключён ядерный режим!", flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond("У вашей цели отключён ядерный режим!", ephemeral=True)
             return
 
         if target_member.communication_disabled_until() is not None:
-            await ctx.respond("Ваша цель и так страдает!", flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond("Ваша цель и так страдает!", ephemeral=True)
             return
 
         # Проверка на цель - бот
@@ -209,7 +209,7 @@ class StartBombCommand(
                 description="Простите, я не могу допустить такого.",
                 image_url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWsxY3FtYzJrcGIzZzk2MWw4MXB5b3dtbGhxazgwczhzZmttbm5xdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xUA7bbaSmCUfNYjhks/giphy.gif"
             )
-            await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond(embed=embed, ephemeral=True)
             return
 
 
@@ -220,7 +220,7 @@ class StartBombCommand(
             embed = create_embed(
                 description="Вы уверены, что желаете запустить в себя ядерку?"
             )
-            await ctx.respond(embed=embed, components=view, flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond(embed=embed, components=view, ephemeral=True)
             return
 
         try:
@@ -231,14 +231,14 @@ class StartBombCommand(
                         description=f"{author.mention} {target_member.mention}, ядерка сделала Хирохито и взорвала вас обоих",
                         image_url=get_random_gif("broken_bomb")
                     )
-                    await ctx.respond(f"||{author.mention} {target_member.mention}||", embed=embed, user_mentions=True)
+                    await ctx.respond(f"||{author.mention} {target_member.mention}||", embed=embed, user_mentions=True, ephemeral=False)
                     await ctx.client.rest.edit_member(guild, ctx.user, communication_disabled_until=pendulum.now("UTC").add(minutes=5), reason="bomb")
                 else:
                     embed = create_embed(
                         description=f"{target_member.mention}\n**Внимание! У тебя прилёт ядерного заряда {nuclear_name}от**\n{ctx.user.mention}",
                         image_url=get_random_gif("bomb_to")
                     )
-                    await ctx.respond(f"||{target_member.mention}||", embed=embed, user_mentions=True)
+                    await ctx.respond(f"||{target_member.mention}||", embed=embed, user_mentions=True, ephemeral=False)
 
                 await ctx.client.rest.edit_member(guild, target_member, communication_disabled_until=pendulum.now("UTC").add(minutes=5), reason="bomb")
 
@@ -284,12 +284,11 @@ class StartMivinaCommand(
     lightbulb.SlashCommand,
     name="мивинка",
     description="Использовать мивинку для лечения.",
-    dm_enabled=False,
     hooks=[fixed_window(5.0, 1, "user")]
 ):
     @lightbulb.invoke
     async def mivina_bomb(self, ctx: lightbulb.Context) -> None:
-        await ctx.defer(ephemeral=True)
+        await ctx.defer()
 
         guild_id = config_manager.get_config_value("GUILD_ID")
         if not guild_id:
@@ -308,7 +307,7 @@ class StartMivinaCommand(
         mivina_count = await nuclear_func.get_weapon_count(member.id, nuclear_type="mivina")
         oldest_mivina_id = await nuclear_func.get_oldest_weapon_id(member.id, weapon_type="mivina")
         if mivina_count is None or mivina_count <= 0 or oldest_mivina_id is None:
-            await ctx.respond("Мивинки закончились, Генерал! К сожалению, ничем помочь не могу!", flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond("Мивинки закончились, Генерал! К сожалению, ничем помочь не могу!", flags=hikari.MessageFlag.NONE)
             return
 
         mivina_channel_id = config_manager.get_config_value("MIVINA_CHANNEL_ID")
@@ -327,7 +326,7 @@ class StartMivinaCommand(
                 )
                 await marmelad_channel.send(embed=embed)
 
-                await ctx.respond("Так точно, Генерал, надеюсь снова такое не произойдёт!")
+                await ctx.respond("Так точно, Генерал, надеюсь снова такое не произойдёт!", flags=hikari.MessageFlag.NONE)
 
                 await nuclear_func.update_log_used(oldest_mivina_id)
 
