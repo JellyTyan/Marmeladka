@@ -15,9 +15,10 @@ config_manager = ConfigManager()
 @loader.command
 class HelpCommand(
     lightbulb.SlashCommand,
-    name="помощь",
-    description="Быстрый экскурс по серверу.",
-    dm_enabled=False
+    name="commands.help.name",
+    description="commands.help.description",
+    dm_enabled=False,
+    localize=True
 ):
     @lightbulb.invoke
     async def help_command(self, ctx: lightbulb.Context, cs: miru.Client) -> None:
@@ -71,12 +72,13 @@ class HelpCommand(
 @loader.command
 class RandomNumberCommand(
     lightbulb.SlashCommand,
-    name="рандом-число",
-    description="Случайное число от и до.",
-    dm_enabled=False
+    name="commands.randomnumber.name",
+    description="commands.randomnumber.description",
+    dm_enabled=False,
+    localize=True
 ):
-    first_number = lightbulb.integer("first_number", "Точка старта.")
-    second_number = lightbulb.integer("second_number", "Точка старта.")
+    first_number = lightbulb.integer("commands.randomnumber.options.first_number.name", "commands.randomnumber.options.first_number.description", localize=True)
+    second_number = lightbulb.integer("commands.randomnumber.options.second_number.name", "commands.randomnumber.options.second_number.description", localize=True)
 
     @lightbulb.invoke
     async def random_number(self, ctx: lightbulb.Context) -> None:
@@ -88,12 +90,13 @@ class RandomNumberCommand(
 @loader.command
 class ClearCommand(
     lightbulb.SlashCommand,
-    name="clear",
-    description="Clears a specified number of messages.",
+    name="commands.clear.name",
+    description="commands.clear.description",
     dm_enabled=False,
-    default_member_permissions=hikari.Permissions.MANAGE_MESSAGES
+    default_member_permissions=hikari.Permissions.MANAGE_MESSAGES,
+    localize=True
 ):
-    amount = lightbulb.integer("amount", "Количество сообщений для удаления.")
+    amount = lightbulb.integer("commands.clear.options.amount.name", "commands.clear.options.amount.description", localize=True)
 
     @lightbulb.invoke
     async def clear_messages(self, ctx: lightbulb.Context) -> None:

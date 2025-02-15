@@ -3,15 +3,16 @@ import hikari
 
 loader = lightbulb.Loader()
 
-group = lightbulb.Group("био", "Узнай историю одной из героинь!", dm_enabled=False)
+group = lightbulb.Group("commands.biography.name", "commands.biography.description", dm_enabled=False, localize=True)
 
 
 @group.register
 class MarmeladkaBioCommand(
     lightbulb.SlashCommand,
-    name="мармеладка",
-    description="Узнай больше о Мармеладке!",
-    dm_enabled=False
+    name="commands.marmeladkabio.name",
+    description="commands.marmeladkabio.description",
+    dm_enabled=False,
+    localize=True
 ):
     @lightbulb.invoke
     async def marmeladka_bio(self, ctx: lightbulb.Context) -> None:
@@ -32,9 +33,10 @@ class MarmeladkaBioCommand(
 @group.register
 class ZefirkaBioCommand(
     lightbulb.SlashCommand,
-    name="зефирка",
-    description="Узнай больше о Зефирке!",
-    dm_enabled=False
+    name="commands.zefirkabio.name",
+    description="commands.zefirkabio.description",
+    dm_enabled=False,
+    localize=True
 ):
     @lightbulb.invoke
     async def zefirka_bio(self, ctx: lightbulb.Context) -> None:
@@ -55,9 +57,10 @@ class ZefirkaBioCommand(
 @group.register
 class ShocomelkaBioCommand(
     lightbulb.SlashCommand,
-    name="шокомелька",
-    description="Узнай больше о Шокомельке!",
-    dm_enabled=False
+    name="commands.shocomelkabio.name",
+    description="commands.shocomelkabio.description",
+    dm_enabled=False,
+    localize=True
 ):
     @lightbulb.invoke
     async def shocomelka_bio(self, ctx: lightbulb.Context) -> None:
@@ -77,9 +80,10 @@ class ShocomelkaBioCommand(
 @group.register
 class MilkaBioCommand(
     lightbulb.SlashCommand,
-    name="милка",
-    description="Узнай больше о Милке!",
-    dm_enabled=False
+    name="commands.milkabio.name",
+    description="commands.milkabio.description",
+    dm_enabled=False,
+    localize=True
 ):
     @lightbulb.invoke
     async def milka_bio(self, ctx: lightbulb.Context) -> None:

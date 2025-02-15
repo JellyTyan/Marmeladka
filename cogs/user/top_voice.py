@@ -13,11 +13,12 @@ loader = lightbulb.Loader()
 voice_start_times = {}
 
 @loader.command
-class NekoCommand(
+class TopVoiceCommand(
     lightbulb.SlashCommand,
-    name="топ-войса",
-    description="Топ пользователей по длительности нахождения в гс.",
-    dm_enabled=False
+    name="commands.topvoice.name",
+    description="commands.topvoice.description",
+    dm_enabled=False,
+    localize=True
 ):
 
     @lightbulb.invoke

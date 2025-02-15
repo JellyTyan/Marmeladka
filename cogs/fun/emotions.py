@@ -9,16 +9,17 @@ from utils.create_embed import create_embed
 
 loader = lightbulb.Loader()
 
-group = lightbulb.Group("эмоция", "Вырази свои чувства!", dm_enabled=False)
+group = lightbulb.Group("commands.emotions.name", "commands.emotions.description", dm_enabled=False, localize=True)
 
 
 @group.register
 class HugCommand(
     lightbulb.SlashCommand,
-    name="обнять",
-    description="Обнять кого-то"
+    name="commands.hug.name",
+    description="commands.hug.description",
+    localize=True
 ):
-    user = lightbulb.user("user", "Кого обнять?")
+    user = lightbulb.user("commands.hug.options.user.name", "commands.hug.options.user.description", localize=True)
 
     @lightbulb.invoke
     async def hug_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
@@ -30,7 +31,7 @@ class HugCommand(
 
         if user.id == me.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Обнимает** \n{user.mention}\nТебе не обязательно было меня обнимать. Обними своего друга...",
+                description=f"{ctx.user.mention}\n**Hugs** \n{user.mention}\nYou didn't have to hug me. Hug your friend...",
                 color=0x2B2D31,
                 image_url="https://media.giphy.com/media/4RK7EnRhtkat2/giphy.gif",
             )
@@ -38,7 +39,7 @@ class HugCommand(
 
         elif ctx.user.id == user.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Обнимает** \n{user.mention}\nБедняжка. Обнимать себя, вместо кого-то, это грустно",
+                description=f"{ctx.user.mention}\n**Hugs** \n{user.mention}\nPoor thing. Hugging yourself instead of someone else is sad.",
                 color=0x2B2D31,
                 image_url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWZvdml1anZ1eHJ4MDRqYTR6cWo2dXJmeGw0eXczajdzNGdweWI4NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/UOIq2y59BhuYy9YL7b/giphy.gif",
             )
@@ -46,7 +47,7 @@ class HugCommand(
 
         else:
             embed = hikari.Embed(
-                description=f"{ctx.user.mention}\n**Обнимает** \n{user.mention}",
+                description=f"{ctx.user.mention}\n**Hugs** \n{user.mention}",
                 color=0x2B2D31,
             )
             embed.set_image(await get_nekos_gif("hug"))
@@ -56,10 +57,11 @@ class HugCommand(
 @group.register
 class KickCommand(
     lightbulb.SlashCommand,
-    name="ударить",
-    description="Ударь кого-то"
+    name="commands.kick.name",
+    description="commands.kick.description",
+    localize=True
 ):
-    user = lightbulb.user("user", "Кого ударить?")
+    user = lightbulb.user("commands.kick.options.user.name", "commands.kick.options.user.description", localize=True)
 
     @lightbulb.invoke
     async def kick_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
@@ -70,7 +72,7 @@ class KickCommand(
 
         if user.id == me.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Попытался ударить** \n{user.mention}\nЧто? Думаешь ты можешь меня ударить? Я приду к тебе ночью и убью тебя.",
+                description=f"{ctx.user.mention}\n**Tried to kick** \n{user.mention}\nWhat? You think you can hit me? I'll come to you at night and kill you.",
                 color=0x2B2D31,
                 image_url="https://media.giphy.com/media/wOly8pa4s4W88/giphy.gif"
             )
@@ -78,7 +80,7 @@ class KickCommand(
 
         elif ctx.user.id == user.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Ударил**\n{user.mention}\nБожечки, мне его жалко((",
+                description=f"{ctx.user.mention}\n**Kicks**\n{user.mention}\nOh, my God, I feel sorry for him((",
                 color=0x2B2D31,
                 image_url="https://media1.tenor.com/m/mzlTqk44glQAAAAd/блять-я-сам-себя-захуярил.gif"
             )
@@ -86,7 +88,7 @@ class KickCommand(
 
         else:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Ударил**\n{user.mention}",
+                description=f"{ctx.user.mention}\n**Kicks**\n{user.mention}",
                 color=0x2B2D31,
                 image_url=await get_nekos_gif("slap")
             )
@@ -96,10 +98,11 @@ class KickCommand(
 @group.register
 class HiCommand(
     lightbulb.SlashCommand,
-    name="привет",
-    description="Приветствуй кого-то"
+    name="commands.hi.name",
+    description="commands.hi.description",
+    localize=True
 ):
-    user = lightbulb.user("user", "Кого приветствуешь?")
+    user = lightbulb.user("commands.hi.options.user.name", "commands.hi.options.user.description", localize=True)
 
     @lightbulb.invoke
     async def hi_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
@@ -110,7 +113,7 @@ class HiCommand(
 
         if user.id == me.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Поприветствовал**\n{user.mention}\nПриветики, привети!",
+                description=f"{ctx.user.mention}\n**Greets**\n{user.mention}\nHenlo, Henlo!",
                 color=0x2B2D31,
                 image_url="https://media.giphy.com/media/bcKmIWkUMCjVm/giphy.gif"
             )
@@ -118,7 +121,7 @@ class HiCommand(
 
         elif ctx.user.id == user.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Поприветствовал**\n{user.mention}\nСамого себя приветствовать... Он одинок?",
+                description=f"{ctx.user.mention}\n**Greets**\n{user.mention}\nGreeting himself... Is he lonely?",
                 color=0x2B2D31,
                 image_url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjI5Zno5YWNrcW9xY3ZkZGlha2o4em0xYjAzM2txNGRndmZ1Z2FzcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/326aSJHSRzCQ3K2cEk/giphy.gif"
             )
@@ -126,7 +129,7 @@ class HiCommand(
 
         else:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Поприветствовал**\n{user.mention}",
+                description=f"{ctx.user.mention}\n**Greets**\n{user.mention}",
                 color=0x2B2D31,
                 image_url=await get_nekos_gif("wave/")
             )
@@ -136,10 +139,11 @@ class HiCommand(
 @group.register
 class KissCommand(
     lightbulb.SlashCommand,
-    name="поцеловать",
-    description="Поцелуй своего любимого"
+    name="commands.kiss.name",
+    description="commands.kiss.description",
+    localize=True
 ):
-    user = lightbulb.user("user", "Кого поцеловать?")
+    user = lightbulb.user("commands.kiss.options.user.name", "commands.kiss.options.user.description", localize=True)
 
     @lightbulb.invoke
     async def kiss_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
@@ -151,7 +155,7 @@ class KissCommand(
 
         if user.id == me.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Целует**\n{user.mention}\nЭто очень мило с твоей стороны. Спасибо! Но мне кажется лучше тебе поцеловать того, кого по настоящему любишь.",
+                description=f"{ctx.user.mention}\n**Kisses**\n{user.mention}\nThat's very nice of you. Thank you! But I think you should kiss someone you really love.",
                 color=0x2B2D31,
                 image_url="https://media.giphy.com/media/4orREzKni7BTi/giphy.gif"
             )
@@ -159,7 +163,7 @@ class KissCommand(
 
         elif ctx.user.id == user.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Целует**\n{user.mention}\nОн сам себя поцеловал. Как же это...",
+                description=f"{ctx.user.mention}\n**Kisses**\n{user.mention}\nHe kissed himself. How did that...",
                 color=0x2B2D31,
                 image_url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaDF3NTZoOTY5dTB2M3JvZTF5OGFvNWJ0bzFqcWRpYzIxYzJmM3RvdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/pBj39cHnzprlS/giphy-downsized-large.gif"
             )
@@ -167,7 +171,7 @@ class KissCommand(
 
         else:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Целует**\n{user.mention}",
+                description=f"{ctx.user.mention}\n**Kisses**\n{user.mention}",
                 color=0x2B2D31,
                 image_url=await get_nekos_gif("kiss")
             )
@@ -176,10 +180,11 @@ class KissCommand(
 @group.register
 class PetCommand(
     lightbulb.SlashCommand,
-    name="погладить",
-    description="Погладь кого-то"
+    name="commands.pet.name",
+    description="commands.pet.description",
+    localize=True
 ):
-    user = lightbulb.user("user", "Кого погладить?")
+    user = lightbulb.user("commands.pet.options.user.name", "commands.pet.options.user.description", localize=True)
 
     @lightbulb.invoke
     async def pet_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
@@ -191,7 +196,7 @@ class PetCommand(
 
         if user.id == me.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Гладит**\n{user.mention}\nОууу... Ты меня приручил <3",
+                description=f"{ctx.user.mention}\n**Pets**\n{user.mention}\nAwww... You tamed me <3",
                 color=0x2B2D31,
                 image_url="https://media.giphy.com/media/X12bFJrWSGTqlhlztZ/giphy.gif"
             )
@@ -199,7 +204,7 @@ class PetCommand(
 
         elif ctx.user.id == user.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Гладит**\n{user.mention}\nГладить самого себя... Это нормально.\nСебя не полюбишь - никто не полюбит",
+                description=f"{ctx.user.mention}\n**Pets**\n{user.mention}Pets yourself... It's normal.\nIf you don't love yourself, no one will.",
                 color=0x2B2D31,
                 image_url="https://media1.tenor.com/m/h2G84I4CL-8AAAAC/trickytank-head.gif"
             )
@@ -207,7 +212,7 @@ class PetCommand(
 
         else:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Гладит**\n{user.mention}",
+                description=f"{ctx.user.mention}\n**Pets**\n{user.mention}",
                 color=0x2B2D31,
                 image_url=await get_nekos_gif("pat")
             )
@@ -216,8 +221,9 @@ class PetCommand(
 @group.register
 class SmileCommand(
     lightbulb.SlashCommand,
-    name="улыбнуться",
-    description="То и означает"
+    name="commands.smile.name",
+    description="commands.smile.description",
+    localize=True
 ):
 
     @lightbulb.invoke
@@ -225,7 +231,7 @@ class SmileCommand(
         image_url = await get_nekos_gif("smile")
         print(image_url)
         embed = create_embed(
-            description=f"{ctx.user.mention}\n**Улыбается**))",
+            description=f"{ctx.user.mention}\n**Smiles**))",
             color=0x2B2D31,
             image_url=image_url
         )
@@ -235,14 +241,15 @@ class SmileCommand(
 @group.register
 class CryCommand(
     lightbulb.SlashCommand,
-    name="плак-плак",
-    description="Или бигмаки?"
+    name="commands.cry.name",
+    description="commands.cry.description",
+    localize=True
 ):
 
     @lightbulb.invoke
     async def cry_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
         embed = create_embed(
-            description=f"{ctx.user.mention}\n**Плачет**(((",
+            description=f"{ctx.user.mention}\n**Crying**(((",
             color=0x2B2D31,
             image_url=await get_nekos_gif("cry")
         )
@@ -252,10 +259,11 @@ class CryCommand(
 @group.register
 class SorryCommand(
     lightbulb.SlashCommand,
-    name="извиниться",
-    description="Извинись перед кем напортачил!"
+    name="commands.sorry.name",
+    description="commands.sorry.description",
+    localize=True
 ):
-    user = lightbulb.user("user", "Перед кем напортачил?")
+    user = lightbulb.user("commands.sorry.options.user.name", "commands.sorry.options.user.description", localize=True)
 
     @lightbulb.invoke
     async def sorry_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
@@ -267,7 +275,7 @@ class SorryCommand(
 
         if user.id == me.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Извиняется перед**\n{user.mention}\nНу.. Я на тебя никогда не обижалась. Не стоит перед мной извиняться. Я не держу обид",
+                description=f"{ctx.user.mention}\n**Apologizes to**\n{user.mention}\nWell, I've never held a grudge against you. You don't have to apologize to me. I don't hold grudges.",
                 color=0x2B2D31,
                 image_url="https://media.giphy.com/media/ulWUgCk4F1GGA/giphy.gif"
             )
@@ -275,7 +283,7 @@ class SorryCommand(
 
         elif ctx.user.id == user.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Извиняется перед**\n{user.mention}\nЧто же ты натворил, что сам перед собой извиняешься...",
+                description=f"{ctx.user.mention}\n**Apologizes to**\n{user.mention}\nWhat have you done that you're apologizing to yourself.....",
                 color=0x2B2D31,
                 image_url=get_random_gif("sorry")
             )
@@ -283,7 +291,7 @@ class SorryCommand(
 
         else:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Извиняется перед**\n{user.mention}",
+                description=f"{ctx.user.mention}\n**Apologizes to**\n{user.mention}",
                 color=0x2B2D31,
                 image_url=get_random_gif("sorry")
             )
@@ -293,10 +301,11 @@ class SorryCommand(
 @group.register
 class HandshakeCommand(
     lightbulb.SlashCommand,
-    name="рукопожатие",
-    description="Пожми руку кому-то"
+    name="commands.handshake.name",
+    description="commands.handshake.description",
+    localize=True
 ):
-    user = lightbulb.user("user", "Кого рукопожатишь?")
+    user = lightbulb.user("commands.handshake.options.user.name", "commands.handshake.options.user.description", localize=True)
 
     @lightbulb.invoke
     async def handshake_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
@@ -308,7 +317,7 @@ class HandshakeCommand(
 
         if user.id == me.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Жмёт руку**\n{user.mention}\nТы мне руку пожал)",
+                description=f"{ctx.user.mention}\n**Shaking hands**\n{user.mention}\nYou shook my hand)",
                 color=0x2B2D31,
                 image_url="https://media.giphy.com/media/CHmwA02GQ6aTS/giphy.gif"
             )
@@ -316,7 +325,7 @@ class HandshakeCommand(
 
         elif ctx.user.id == user.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Жмёт руку**\n{user.mention}",
+                description=f"{ctx.user.mention}\n**Shaking hands**\n{user.mention}",
                 color=0x2B2D31,
                 image_url="https://media1.tenor.com/m/LjDeSB3jOb0AAAAd/donfreez-handshake.gif"
             )
@@ -324,7 +333,7 @@ class HandshakeCommand(
 
         else:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Жмёт руку**\n{user.mention}",
+                description=f"{ctx.user.mention}\n**Shaking hands**\n{user.mention}",
                 color=0x2B2D31,
                 image_url=get_random_gif("handshake")
             )
@@ -334,10 +343,11 @@ class HandshakeCommand(
 @group.register
 class TickleCommand(
     lightbulb.SlashCommand,
-    name="щекотать",
-    description="Щекотай кого-то"
+    name="commands.tickle.name",
+    description="commands.tickle.description",
+    localize=True
 ):
-    user = lightbulb.user("user", "Кого шекотать?")
+    user = lightbulb.user("commands.tickle.options.user.name", "commands.tickle.options.user.description", localize=True)
 
     @lightbulb.invoke
     async def tike_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
@@ -349,7 +359,7 @@ class TickleCommand(
 
         if user.id == me.id:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Щекотает**\n{user.mention}\nАААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА",
+                description=f"{ctx.user.mention}\n**Tickles**\n{user.mention}\nАААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА",
                 color=0x2B2D31,
                 image_url="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTdvdWw0MTgxZXBsbzQxc2oyNnZycnAzZTJ4OHV6aWVxNHowNXVrZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7528JmqtT7cwzV1S/giphy.gif"
             )
@@ -357,7 +367,7 @@ class TickleCommand(
 
         else:
             embed = create_embed(
-                description=f"{ctx.user.mention}\n**Щекотает**\n{user.mention}",
+                description=f"{ctx.user.mention}\n**Tickles**\n{user.mention}",
                 color=0x2B2D31,
                 image_url=await get_nekos_gif("tickle")
             )
@@ -366,13 +376,14 @@ class TickleCommand(
 @group.register
 class MidfingerCommand(
     lightbulb.SlashCommand,
-    name="фак",
-    description="Весёлый третий пальчик."
+    name="commands.midfinger.name",
+    description="commands.midfinger.description",
+    localize=True
 ):
     @lightbulb.invoke
     async def midfinger_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
         embed = create_embed(
-            description=f"{ctx.user.mention}\n**Показывает фак**",
+            description=f"{ctx.user.mention}\n**Flips the bird**",
             color=0x2B2D31,
             image_url=await get_waifu_gif("midfing")
         )

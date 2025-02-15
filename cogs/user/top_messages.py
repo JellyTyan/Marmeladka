@@ -11,11 +11,12 @@ loader = lightbulb.Loader()
 
 
 @loader.command
-class NekoCommand(
+class TopMessagesCommand(
     lightbulb.SlashCommand,
-    name="топ-сообщений",
-    description="Топ пользователей по сообщениям.",
-    dm_enabled=False
+    name="commands.topmessages.name",
+    description="commands.topmessages.description",
+    dm_enabled=False,
+    localize=True
 ):
 
     @lightbulb.invoke

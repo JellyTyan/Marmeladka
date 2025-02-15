@@ -7,13 +7,14 @@ import functions.cutie_func as cutieFunc
 
 loader = lightbulb.Loader()
 
-group = lightbulb.Group("cutie", "Милота", dm_enabled=False)
+group = lightbulb.Group("commands.cutie.name", "commands.cutie.description", dm_enabled=False, localize=True)
 
 @group.register
 class FrogImage(
     lightbulb.SlashCommand,
-    name="ква",
-    description="Ква-ква-ква"
+    name="commands.frogimage.name",
+    description="commands.frogimage.description",
+    localize=True
 ):
     @lightbulb.invoke
     async def invoke(self, ctx: lightbulb.Context) -> None:
@@ -30,8 +31,9 @@ class FrogImage(
 @group.register
 class CatImage(
     lightbulb.SlashCommand,
-    name="мяу",
-    description="Мяяяяяяя"
+    name="commands.catimage.name",
+    description="commands.catimage.description",
+    localize=True
 ):
     @lightbulb.invoke
     async def invoke(self, ctx: lightbulb.Context) -> None:
@@ -46,8 +48,9 @@ class CatImage(
 @group.register
 class FoxImage(
     lightbulb.SlashCommand,
-    name="фыр",
-    description="Фыр-фыр-фыр"
+    name="commands.foximage.name",
+    description="commands.foximage.description",
+    localize=True
 ):
     @lightbulb.invoke
     async def invoke(self, ctx: lightbulb.Context) -> None:
@@ -64,8 +67,9 @@ class FoxImage(
 @group.register
 class GooseImage(
     lightbulb.SlashCommand,
-    name="га",
-    description="Га-га-га"
+    name="commands.gooseimage.name",
+    description="commands.gooseimage.description",
+    localize=True
 ):
     @lightbulb.invoke
     async def invoke(self, ctx: lightbulb.Context) -> None:

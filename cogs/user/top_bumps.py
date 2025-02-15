@@ -1,5 +1,6 @@
 import hikari
 import lightbulb
+from lightbulb import localization
 
 from database.database_manager import DatabaseManager, UserData
 from sqlalchemy import select
@@ -11,11 +12,12 @@ loader = lightbulb.Loader()
 
 
 @loader.command
-class NekoCommand(
+class TopBumpsCommand(
     lightbulb.SlashCommand,
-    name="топ-бампов",
-    description="Топ пользователей по бампам.",
-    dm_enabled=False
+    name="commands.topbumps.name",
+    description="commands.topbumps.description",
+    dm_enabled=False,
+    localize=True
 ):
 
     @lightbulb.invoke

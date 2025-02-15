@@ -48,9 +48,10 @@ async def on_member_remove(event: hikari.MemberDeleteEvent):
 @loader.command
 class SuicideCommand(
     lightbulb.SlashCommand,
-    name="суицид",
-    description="Press F.",
-    dm_enabled=False
+    name="commands.suicide.name",
+    description="commands.suicide.description",
+    dm_enabled=False,
+    localize=True
 ):
     @lightbulb.invoke
     async def help_command(self, ctx: lightbulb.Context) -> None:
@@ -78,10 +79,11 @@ class SuicideCommand(
 @loader.command
 class ArsenalCommand(
     lightbulb.SlashCommand,
-    name="арсенал",
-    description="Ядерки, Мивинки - тебе это нужно?",
+    name="commands.arsenal.name",
+    description="commands.arsenal.description",
     dm_enabled=False,
-    hooks=[fixed_window(5.0, 1, "user")]
+    hooks=[fixed_window(5.0, 1, "user")],
+    localize=True
 ):
     @lightbulb.invoke
     async def arsenal(self, ctx: lightbulb.Context, cx: miru.Client) -> None:
@@ -143,13 +145,14 @@ class ArsenalCommand(
 @loader.command
 class StartBombCommand(
     lightbulb.SlashCommand,
-    name="ядерка",
-    description="Запусти ядерку на человека.",
+    name="commands.startbomb.name",
+    description="commands.startbomb.description",
     dm_enabled=False,
-    hooks=[fixed_window(5.0, 1, "user")]
+    hooks=[fixed_window(5.0, 1, "user")],
+    localize=True
 ):
-    user = lightbulb.user("user", "В кого запустить?")
-    name = lightbulb.string("name", "Название пускаемого бое-заряда.", default=None)
+    user = lightbulb.user("commands.startbomb.options.user.name", "commands.startbomb.options.user.description", localize=True)
+    name = lightbulb.string("commands.startbomb.options.string.name", "commands.startbomb.options.string.description", default=None, localize=True)
 
     @lightbulb.invoke
     async def start_bomb(self, ctx: lightbulb.Context) -> None:
@@ -273,9 +276,10 @@ class StartBombCommand(
 @loader.command
 class StartMivinaCommand(
     lightbulb.SlashCommand,
-    name="мивинка",
-    description="Использовать мивинку для лечения.",
-    hooks=[fixed_window(5.0, 1, "user")]
+    name="commands.startmivina.name",
+    description="commands.startmivina.description",
+    hooks=[fixed_window(5.0, 1, "user")],
+    localize=True
 ):
     @lightbulb.invoke
     async def mivina_bomb(self, ctx: lightbulb.Context) -> None:
@@ -346,9 +350,10 @@ class StartMivinaCommand(
 @loader.command
 class NuclearCaseCommand(
     lightbulb.SlashCommand,
-    name="кейс",
-    description="Выдача ядерки и мивинки.",
+    name="commands.nuclearcase.name",
+    description="commands.nuclearcase.description",
     dm_enabled=False,
+    localize=True
 ):
     @lightbulb.invoke
     async def nuclear_case(self, ctx: lightbulb.Context, cx: miru.Client) -> None:

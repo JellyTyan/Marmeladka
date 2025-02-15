@@ -7,14 +7,15 @@ from functions.anime_func import get_nekos_gif
 
 loader = lightbulb.Loader()
 
-group = lightbulb.Group("аниме", "Анимешные картинки.", dm_enabled=False)
+group = lightbulb.Group("commands.anime.name", "commands.anime.description", dm_enabled=False, localize=True)
 
 
 @group.register
 class NekoCommand(
     lightbulb.SlashCommand,
-    name="неко",
-    description="Кошко-девочки"
+    name="commands.neko.name",
+    description="commands.neko.description",
+    localize=True
 ):
 
     @lightbulb.invoke
@@ -27,8 +28,9 @@ class NekoCommand(
 @group.register
 class FoxCommand(
     lightbulb.SlashCommand,
-    name="лисы",
-    description="Лисы-девочки, да?"
+    name="commands.fox.name",
+    description="commands.fox.description",
+    localize=True
 ):
 
     @lightbulb.invoke
@@ -41,8 +43,9 @@ class FoxCommand(
 @group.register
 class WaifuCommand(
     lightbulb.SlashCommand,
-    name="вайфу",
-    description="Ваши и не только вафу!"
+    name="commands.waifu.name",
+    description="commands.waifu.description",
+    localize=True
 ):
 
     @lightbulb.invoke
@@ -54,8 +57,9 @@ class WaifuCommand(
 @group.register
 class HusbandoCommand(
     lightbulb.SlashCommand,
-    name="хусбандо",
-    description="Ваши и не только мужчины!"
+    name="commands.husbando.name",
+    description="commands.husbando.description",
+    localize=True
 ):
 
     @lightbulb.invoke

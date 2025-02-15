@@ -12,13 +12,14 @@ loader = lightbulb.Loader()
 
 
 @loader.command
-class NekoCommand(
+class UserProfileCommand(
     lightbulb.SlashCommand,
-    name="профиль",
-    description="Профиль пользователя.",
-    dm_enabled=False
+    name="commands.userprofile.name",
+    description="commands.userprofile.description",
+    dm_enabled=False,
+    localize=True
 ):
-    user = lightbulb.user("user", "Чей профиль посмотришь?", default=None)
+    user = lightbulb.user("commands.userprofile.options.user.name", "commands.userprofile.options.user.description", default=None, localize=True)
 
     @lightbulb.invoke
     async def user_profile(self, ctx: lightbulb.Context) -> None:

@@ -1,0 +1,8 @@
+{
+    "commands.help.name": "help",
+    "commands.help.description": "",
+    "commands.randomnumber.name": "randomnumber",
+    "commands.randomnumber.description": "",
+    "commands.clear.name": "clear",
+    "commands.clear.description": ""
+}

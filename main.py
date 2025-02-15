@@ -6,10 +6,14 @@ import miru
 from config.config_manager import ConfigManager
 from database.database_manager import DatabaseManager
 from utils.check_all_hooks import check_info_view, check_ticket_view
+from utils.localization_provider import localization_provider
 
 config_manager = ConfigManager()
-bot = hikari.GatewayBot(intents=hikari.Intents.ALL, token=config_manager.get_config_value("BOT_TOKEN"))
-client = lightbulb.client_from_app(bot)
+bot = hikari.GatewayBot(
+    intents=hikari.Intents.ALL,
+    token=config_manager.get_config_value("BOT_TOKEN")
+    )
+client = lightbulb.client_from_app(bot, localization_provider=localization_provider)
 
 bot.subscribe(hikari.StartingEvent, client.start)
 
