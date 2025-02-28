@@ -20,9 +20,9 @@ class FrogImage(
     async def invoke(self, ctx: lightbulb.Context) -> None:
         frog_image_url = await cutieFunc.get_random_image(query='frog')
 
-        embed = hikari.Embed(description="Ква-ква-ква", color=0x53377A)
+        embed = hikari.Embed(description="Ribiir-ribbit-ribibit", color=0x53377A)
         embed.set_image(frog_image_url)
-        embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+        embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
         response = await ctx.respond(embed=embed)
         await asyncio.sleep(300)
         await ctx.delete_response(response)
@@ -37,9 +37,9 @@ class CatImage(
 ):
     @lightbulb.invoke
     async def invoke(self, ctx: lightbulb.Context) -> None:
-        embed = hikari.Embed(description="Мяу-мя", color=0x53377A)
+        embed = hikari.Embed(description="Meeew :3", color=0x53377A)
         embed.set_image(nekos.cat())
-        embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+        embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
         response = await ctx.respond(embed=embed)
         await asyncio.sleep(300)
         await ctx.delete_response(response)
@@ -56,9 +56,9 @@ class FoxImage(
     async def invoke(self, ctx: lightbulb.Context) -> None:
         fox_image_url = await cutieFunc.get_random_fox_image()
 
-        embed = hikari.Embed(description="Фряя", color=0x53377A)
+        embed = hikari.Embed(description="Frrr", color=0x53377A)
         embed.set_image(fox_image_url)
-        embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+        embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
         response = await ctx.respond(embed=embed)
         await asyncio.sleep(300)
         await ctx.delete_response(response)
@@ -73,9 +73,9 @@ class GooseImage(
 ):
     @lightbulb.invoke
     async def invoke(self, ctx: lightbulb.Context) -> None:
-        embed = hikari.Embed(description="ГАААА", color=0x53377A)
+        embed = hikari.Embed(description="HOOOOONK", color=0x53377A)
         embed.set_image(await cutieFunc.get_goose_image("goose"))
-        embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+        embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
         response = await ctx.respond(embed=embed)
         await asyncio.sleep(300)
         await ctx.delete_response(response)

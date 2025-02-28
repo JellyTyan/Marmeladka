@@ -106,9 +106,9 @@ class HusbandoCommand(
 
 
 async def build_embed(x: str):
-    embed = hikari.Embed(description="Анимееее", color=0x53377A)
+    embed = hikari.Embed(color=0x53377A)
     embed.set_image(await get_nekos_gif(x))
-    embed.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+    embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
     return embed
 
 loader.command(group)
