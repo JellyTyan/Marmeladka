@@ -1,3 +1,5 @@
+import json
+import logging
 import os
 
 import hikari
@@ -10,8 +12,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from config.config_manager import ConfigManager
-from database.database_manager import DatabaseManager, NuclearData
+from database.database_manager import DatabaseManager
+from database.models import NuclearData
 from functions.nuclear_func import NuclearFunc
+from functions.user_profile_func import UserProfileFunc
 from ui.nuclearUI import NuclearCase, SelfBombActivate, TurnOffNuclear, TurnOnNuclear
 from utils.create_embed import create_embed
 from utils.get_random_gif import get_random_gif
@@ -19,10 +23,12 @@ from utils.get_random_gif import get_random_gif
 last_switch_call = {}
 
 loader = lightbulb.Loader()
+logger = logging.getLogger(__name__)
 
 database_manager = DatabaseManager()
 config_manager = ConfigManager()
 nuclear_func = NuclearFunc()
+
 
 
 @loader.listener(hikari.MemberCreateEvent)
@@ -50,7 +56,7 @@ class SuicideCommand(
     lightbulb.SlashCommand,
     name="commands.suicide.name",
     description="commands.suicide.description",
-    dm_enabled=False,
+    contexts=(hikari.ApplicationContextType(0),),
     localize=True
 ):
     @lightbulb.invoke
@@ -67,13 +73,16 @@ class SuicideCommand(
             await ctx.client.rest.edit_member(guild, ctx.user, communication_disabled_until=pendulum.now("UTC").add(minutes=1), reason="Suicide")
 
             embed = create_embed(
-                description=f"{ctx.user.mention} суициднулся. Press F",
+                description=f"{ctx.user.mention} made suicide. Press F",
                 image_url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOTZuaTZmczRuZ2ltM2tiemZibTZlamo0ODdqMTRjejUyNzAzZnpxeiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/eHR8NnClhVMwgRIAwb/giphy-downsized.gif",
                 color=0x313338
             )
             await ctx.respond(embed=embed)
         except Exception:
-            await ctx.respond("Простите, вы не смогли самоубиться...")
+            with open ("localization/ru-Ru.json", "r") as f:
+                data = json.load(f)
+
+            await ctx.respond(data.get("suicide").get("fail"))
 
 
 @loader.command
@@ -81,27 +90,30 @@ class ArsenalCommand(
     lightbulb.SlashCommand,
     name="commands.arsenal.name",
     description="commands.arsenal.description",
-    dm_enabled=False,
+    contexts=(hikari.ApplicationContextType(0),),
     hooks=[fixed_window(5.0, 1, "user")],
     localize=True
 ):
     @lightbulb.invoke
     async def arsenal(self, ctx: lightbulb.Context, cx: miru.Client) -> None:
-        await ctx.defer(ephemeral=True)
+        # await ctx.defer(ephemeral=True)
         user = ctx.user
 
         # Если пользователь новый, то отправляем вспомонательный эмбед
         if await nuclear_func.get_new_user(user.id):
+            user_language = await UserProfileFunc().get_lang(user.id)
+            with open (f"localization/{user_language}.json", "r") as f:
+                language_json = json.load(f)
             embedNewUser_1 = create_embed(
-                title="Приветствуем новичка в системе Ядерок!",
-                description="Ядерка - это уникальная разработка в Discord. Ядерка - это не будущее, это настоящее. Ваш разговор зашёл в тупик? Запусти ядерку! Он не сможет ничего делать в течении 5-и минут! Только готовься в сию же секунду получить ответку. \n ДА НАЧНЁТСЯ ЖЕ ЯДЕРНАЯ ВОЙНА!",
+                title=language_json["arsenal"]["new_user"][0]["title"],
+                description=language_json["arsenal"]["new_user"][0]["description"],
                 image_url="https://cdn.discordapp.com/attachments/1149398121110057088/1197523129187188816/nuclear-weapons-earth-0308221.png?ex=65bb9352&is=65a91e52&hm=b44b59d17423f2a75659eb7746f9f8663fc489e3c0e8f60f8b90828385d390bf&",
                 color=0x313338
             )
 
             embedNewUser_2 = create_embed(
-                title="Приветствуем новичка в системе Ядерок!",
-                description="А теперь я расскажу как ей пользоваться. \n Тебе нужно запомнить 2 фразы ```Дайте мне пульт от ядерки``` и ```Дайте мне мивинку```\n С ними я понимаю, что тебе требуется арсенал. \n Получать арсенал ты можешь один раз в день. \nЧтобы попросить арсенал воспользуйся командой ```/кейс```\n\n Теперь ты получил ядерку или мивинку. В твоём распоряжении кнопка запуска и аптечка. \n По нажатию **кнопки запуска** (команда)```/ядерка *пользователь*``` ты отправляешь ядерку на свою цель. \n **Мивинка** тебе нужна, чтобы подлечится, если вдруг на тебя попала ядерка. Для этого тебе нужно попросить меня тебя подлечить (В ЛС со мной)```/мивинка```\n Ядерку ты не сможешь запустить на Сладостей и остальных ботов. \nНу же! Получи свою первую Ядерку прямо сейчас!\n\n Инструктаж закончен! Удачи, Генерал!",
+                title=language_json["arsenal"]["new_user"][1]["title"],
+                description=language_json["arsenal"]["new_user"][1]["description"],
                 color=0x313338
             )
 
@@ -120,13 +132,17 @@ class ArsenalCommand(
             cx.start_view(navigator)
 
             await nuclear_func.set_new_user(user.id, False)
-            await nuclear_func.update_nuclear_mode(user.id, 1)
+            await nuclear_func.update_nuclear_mode(user.id, True)
             return
 
         # Если ядерный режим отключён, то предлагаем включить
         if await nuclear_func.get_nuclear_mode(user.id) is False:
+            user_language = await UserProfileFunc().get_lang(user.id)
+            with open (f"localization/{user_language}.json", "r") as f:
+                language_json = json.load(f)
+
             view = miru.View().add_item(TurnOnNuclear())
-            await ctx.respond("Ядерный режим отключён. Желаете включить?", flags=hikari.MessageFlag.EPHEMERAL, components=view)
+            await ctx.respond(language_json["arsenal"]["nuclear_off"], flags=hikari.MessageFlag.EPHEMERAL, components=view)
             cx.start_view(view)
             return
 
@@ -139,7 +155,7 @@ class ArsenalCommand(
 
         cx.start_view(nuclear_off_view)
 
-        os.remove("profileTemp.png")
+        os.remove(image_profile)
 
 
 @loader.command
@@ -147,7 +163,7 @@ class StartBombCommand(
     lightbulb.SlashCommand,
     name="commands.startbomb.name",
     description="commands.startbomb.description",
-    dm_enabled=False,
+    contexts=(hikari.ApplicationContextType(0),),
     hooks=[fixed_window(5.0, 1, "user")],
     localize=True
 ):
@@ -156,9 +172,6 @@ class StartBombCommand(
 
     @lightbulb.invoke
     async def start_bomb(self, ctx: lightbulb.Context) -> None:
-        target_user = self.user
-        nuclear_name = self.name
-
         target_user = self.user
         nuclear_name = f'"{self.name}" ' if self.name else " "
 
@@ -175,32 +188,37 @@ class StartBombCommand(
         if not author or not target_member:
             return
 
+        # Получения языка пользователя
+        user_language = await UserProfileFunc().get_lang(author.id)
+        with open (f"localization/{user_language}.json", "r") as f:
+            language_json = json.load(f)
+
         # Проверка на ядерный режим автора
         author_nuclear_mode = await nuclear_func.get_nuclear_mode(author.id)
-        if author_nuclear_mode == 0:
-            await ctx.respond("У вас отключён ядерный режим!", ephemeral=True)
+        if author_nuclear_mode is False:
+            await ctx.respond(language_json["start_bomb"]["nuclear_off"], ephemeral=True)
             return
         # Проверка на наличие ядерок
         bombs_count = await nuclear_func.get_weapon_count(author.id, nuclear_type="bomb")
         oldest_bomb_id = await nuclear_func.get_oldest_weapon_id(author.id, weapon_type="bomb")
         if bombs_count and bombs_count <= 0 or oldest_bomb_id is None:
-            await ctx.respond("Ваш ядерный арсенал пуст, Генерал!", ephemeral=True)
+            await ctx.respond(language_json["start_bomb"]["arsenal_empty"], ephemeral=True)
             return
 
         # Проверка на ядерный режим цели
         target_nuclear_mode = await nuclear_func.get_nuclear_mode(target_member.id)
-        if target_nuclear_mode == 0:
-            await ctx.respond("У вашей цели отключён ядерный режим!", ephemeral=True)
+        if target_nuclear_mode is False:
+            await ctx.respond(language_json["start_bomb"]["target_nuclear_off"], ephemeral=True)
             return
 
         if target_member.communication_disabled_until() is not None:
-            await ctx.respond("Ваша цель и так страдает!", ephemeral=True)
+            await ctx.respond(language_json["start_bomb"]["target_suffering"], ephemeral=True)
             return
 
         # Проверка на цель - бот
         if target_member.is_bot:
             embed = create_embed(
-                description="Простите, я не могу допустить такого.",
+                description=language_json["start_bomb"]["bot_protection"],
                 image_url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWsxY3FtYzJrcGIzZzk2MWw4MXB5b3dtbGhxazgwczhzZmttbm5xdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xUA7bbaSmCUfNYjhks/giphy.gif"
             )
             await ctx.respond(embed=embed, ephemeral=True)
@@ -211,9 +229,7 @@ class StartBombCommand(
         if target_member.id == author.id:
             view = miru.View(timeout=60).add_item(SelfBombActivate())
 
-            embed = create_embed(
-                description="Вы уверены, что желаете запустить в себя ядерку?"
-            )
+            embed = create_embed(description=language_json["start_bomb"]["self_bomb"])
             await ctx.respond(embed=embed, components=view, ephemeral=True)
             return
 
@@ -221,15 +237,15 @@ class StartBombCommand(
             if await nuclear_func.is_weapon_activated(oldest_bomb_id):
                 if await nuclear_func.is_bomb_make_hirohito(oldest_bomb_id):
                     embed = create_embed(
-                        title="О, нет!",
-                        description=f"{author.mention} {target_member.mention}, ядерка сделала Хирохито и взорвала вас обоих",
+                        title="Oh, no!",
+                        description=f"{author.mention} {target_member.mention}, nuclear did a Hirohito and blew you both up.",
                         image_url=get_random_gif("broken_bomb")
                     )
                     await ctx.respond(f"||{author.mention} {target_member.mention}||", embed=embed, user_mentions=True, ephemeral=False)
                     await ctx.client.rest.edit_member(guild, ctx.user, communication_disabled_until=pendulum.now("UTC").add(minutes=5), reason="bomb")
                 else:
                     embed = create_embed(
-                        description=f"{target_member.mention}\n**Внимание! У тебя прилёт ядерного заряда {nuclear_name}от**\n{ctx.user.mention}",
+                        description=f"{target_member.mention}\n**WARNING! You’re getting hit by a nuclear payload {nuclear_name}from**\n{ctx.user.mention}",
                         image_url=get_random_gif("bomb_to")
                     )
                     await ctx.respond(f"||{target_member.mention}||", embed=embed, user_mentions=True, ephemeral=False)
@@ -244,7 +260,7 @@ class StartBombCommand(
                 # self.bot.dispatch("bomb_start", inter.author, member)
             else:
                 embed = create_embed(
-                    description="Упс. Ядерка не сработала. Кажется она слишком старая.",
+                    description="Oops. The nuke didn’t go off. Seems like it’s too old.",
                     image_url="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDFlNTZoYXNjM21ta2FrbTZoN3E3MjNkMnhraGxhazJtaW42NjJ0ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qkf7qxSEUqNCataNjK/giphy.gif"
                 )
                 await nuclear_func.update_log_used(oldest_bomb_id)
@@ -252,25 +268,23 @@ class StartBombCommand(
                 await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
                 return
         except Exception as e:
-            print(e)
+            logger.error(e)
 
         # Попытка отправке жертве успешную отправку ядерки
         try:
-            DMmessage = f"ГЕНЕРАЛ! НЕ ВРЕМЯ ДРЕМАТЬ!\n\n{author.mention} запустил в нас своим вооружением {nuclear_name}и мы страдаем от этого!\n Захавай мивинку и вперёд в бой!\n`/мивинка`"
+            DMmessage = (language_json["start_bomb"]["dm_alert"]).format(author.mention, nuclear_name)
             await target_member.send(DMmessage, user_mentions=True)
 
         # Если произошла ошибка отправить в чат
         except hikari.ForbiddenError:
-            embed = create_embed(
-                description="Привет! В тебя запустили ядерку.\nЧтобы вылечиться используй в ЛС со мной команду `/мивинка`. \n\nЯ тебе не смогла отправить в ЛС это сообщение! При возникновении проблем с использованием команды `/мивинка` попробуй поменять настройки конфендициальности Discord."
-            )
+            embed = create_embed(description=language_json["start_bomb"]["mivina_help"])
 
             mivina_channel_id = config_manager.get_config_value("MIVINA_CHANNEL_ID")
             marmelad_channel = await ctx.client.rest.fetch_channel(int(mivina_channel_id))
             if isinstance(marmelad_channel, hikari.TextableGuildChannel):
                 await marmelad_channel.send(f"{target_member.mention}", embed=embed, user_mentions=True)
         except Exception as e:
-            print(e)
+            logger.error(e)
 
 
 @loader.command
@@ -278,6 +292,7 @@ class StartMivinaCommand(
     lightbulb.SlashCommand,
     name="commands.startmivina.name",
     description="commands.startmivina.description",
+    contexts=[hikari.ApplicationContextType(1)],
     hooks=[fixed_window(5.0, 1, "user")],
     localize=True
 ):
@@ -293,20 +308,25 @@ class StartMivinaCommand(
         if not guild:
             return
 
+        # Получения языка пользователя
+        user_language = await UserProfileFunc().get_lang(ctx.user.id)
+        with open (f"localization/{user_language}.json", "r") as f:
+            language_json = json.load(f)
+
         member = guild.get_member(ctx.user.id)
         if not member:
-            await ctx.respond("Пользователь не найден.", flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond(language_json["mivina"]["no_member"], flags=hikari.MessageFlag.EPHEMERAL)
             return
 
         # Проверка на наличие мивинок у пользователя
         mivina_count = await nuclear_func.get_weapon_count(member.id, nuclear_type="mivina")
         oldest_mivina_id = await nuclear_func.get_oldest_weapon_id(member.id, weapon_type="mivina")
         if mivina_count is None or mivina_count <= 0 or oldest_mivina_id is None:
-            await ctx.respond("Мивинки закончились, Генерал! К сожалению, ничем помочь не могу!", flags=hikari.MessageFlag.NONE)
+            await ctx.respond(language_json["mivina"]["no_mivina"], flags=hikari.MessageFlag.NONE)
             return
 
         if member.communication_disabled_until() is None:
-            await ctx.respond("Сер, вы в порядке!", flags=hikari.MessageFlag.NONE)
+            await ctx.respond(language_json["mivina"]["healthy"], flags=hikari.MessageFlag.NONE)
             return
 
         mivina_channel_id = config_manager.get_config_value("MIVINA_CHANNEL_ID")
@@ -320,12 +340,12 @@ class StartMivinaCommand(
 
                 # Отправляем в канал Мармеладка информацию о использовании мивины
                 embed = create_embed(
-                    description=f"{ctx.user.mention}\n**Вкусил вкусняшечки**",
+                    description=f"{ctx.user.mention}\n**Tasted the deliciousness!**",
                     image_url=get_random_gif("mivina")
                 )
                 await marmelad_channel.send(embed=embed)
 
-                await ctx.respond("Так точно, Генерал, надеюсь снова такое не произойдёт!", flags=hikari.MessageFlag.NONE)
+                await ctx.respond(language_json["mivina"]["success_dm"], flags=hikari.MessageFlag.NONE)
 
                 await nuclear_func.update_log_used(oldest_mivina_id)
 
@@ -333,9 +353,9 @@ class StartMivinaCommand(
                 await nuclear_func.update_start_count(member.id, start_mivina + 1, "mivina_start_count")
                 # self.bot.dispatch("mivina_start", inter.author)
             else:
-                await ctx.respond("Возьмите салфеточку, Генерал...")
+                await ctx.respond(language_json["mivina"]["not_success"])
                 embed = create_embed(
-                    description=f"{ctx.user.mention}\nЗапарил мивинку и добавил Beanz от Вафельки, которые шли в комплекте. {ctx.user.mention} стошнило. Кажется Beanz были просрочены. Почему?",
+                    description=(language_json["mivina"]["bad_mivina"]).format(user=ctx.user.mention),
                     image_url="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExYWVpODRkMjk1am91amhuaDdiczRtYm50M2Npd3Y5aWl5eWF0Y3R3YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/nfecRCYP9PjO/giphy.gif"
                     )
 
@@ -343,8 +363,8 @@ class StartMivinaCommand(
                 await nuclear_func.update_log_used(oldest_mivina_id)
                 # self.bot.dispatch("mivina_start", inter.author)
         except Exception as e:
-            await ctx.respond("Простите, произошла неизвестная ошибка")
-            print(e)
+            await ctx.respond(language_json["mivina"]["error"])
+            logger.error(e)
 
 
 @loader.command
@@ -352,14 +372,17 @@ class NuclearCaseCommand(
     lightbulb.SlashCommand,
     name="commands.nuclearcase.name",
     description="commands.nuclearcase.description",
-    dm_enabled=False,
+    contexts=(hikari.ApplicationContextType(0),),
     localize=True
 ):
     @lightbulb.invoke
     async def nuclear_case(self, ctx: lightbulb.Context, cx: miru.Client) -> None:
         check_new_user = await nuclear_func.get_new_user(ctx.user.id)
         if check_new_user is True:
-            await ctx.respond("Приветствую нового генерала в системе Ядерка! Пропишите `/арсенал` для деталей", flags=hikari.MessageFlag.EPHEMERAL)
+            user_language = await UserProfileFunc().get_lang(ctx.user.id)
+            with open (f"localization/{user_language}.json", "r") as f:
+                language_json = json.load(f)
+            await ctx.respond(language_json["nuclear_case"]["new_user"], flags=hikari.MessageFlag.EPHEMERAL)
             return
         else:
             modal = NuclearCase()

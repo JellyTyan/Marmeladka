@@ -1,8 +1,9 @@
 import hikari
 import lightbulb
-from lightbulb import localization
+import logging
 
-from database.database_manager import DatabaseManager, UserData
+from database.database_manager import DatabaseManager
+from database.models import UserData
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
@@ -10,13 +11,14 @@ database_manager = DatabaseManager()
 
 loader = lightbulb.Loader()
 
+logger = logging.getLogger(__name__)
 
 @loader.command
 class TopBumpsCommand(
     lightbulb.SlashCommand,
     name="commands.topbumps.name",
     description="commands.topbumps.description",
-    dm_enabled=False,
+    contexts=(hikari.ApplicationContextType(0),),
     localize=True
 ):
 
@@ -28,7 +30,7 @@ class TopBumpsCommand(
             top_users_list = await session.scalars(stmt)
             await session.aclose()
 
-        title = "Топ 10 пользователей по количеству бампов на сервере:\n\n"
+        title = "**Top 10 users by number of bumps on the server:**\n\n"
 
         guild_id = ctx.guild_id
         if guild_id is None:
@@ -48,7 +50,7 @@ class TopBumpsCommand(
             else:
                 user_ping = f"<@{user.user_id}>"
 
-            title += f"{index}. {user_ping} - {user.bump_count} бампов\n"
+            title += f"{index}. {user_ping} - {user.bump_count} bumps\n"
         embed = hikari.Embed(description=title, color=0x2B2D31)
 
         await ctx.respond(embed=embed)
@@ -93,7 +95,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
                         bump_count = await session.scalar(stmt)
 
                 embed_success = hikari.Embed(
-                    description=f"Хэй, {user.mention}, спасибочки!\n Общее твоё количество бампов: `{bump_count}`",
+                    description=f"Hey, {user.mention}, thank u!\n Your total bumps: `{bump_count}`",
                     color=0x2B2D31,
                 )
                 channel = event.get_channel()
@@ -101,7 +103,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
                     await channel.send(embed=embed_success)
 
     except Exception as e:
-        print(e)
+        logger.error(e)
         pass
 
 

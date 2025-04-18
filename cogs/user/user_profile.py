@@ -16,7 +16,7 @@ class UserProfileCommand(
     lightbulb.SlashCommand,
     name="commands.userprofile.name",
     description="commands.userprofile.description",
-    dm_enabled=False,
+    contexts=(hikari.ApplicationContextType(0),),
     localize=True
 ):
     user = lightbulb.user("commands.userprofile.options.user.name", "commands.userprofile.options.user.description", default=None, localize=True)
@@ -72,7 +72,7 @@ class UserProfileCommand(
 
             embedProfile = hikari.Embed()
             embedProfile.set_image(image_binary)
-            embedProfile.set_footer(text="Сообщение удалиться через 5 минут", icon="https://i.gifer.com/ZKZg.gif")
+            embedProfile.set_footer(text="Message will be deleted in 5 minutes", icon="https://i.gifer.com/ZKZg.gif")
 
             response = await ctx.respond(embed=embedProfile)
             await asyncio.sleep(300)

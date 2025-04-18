@@ -3,7 +3,7 @@ import hikari
 
 loader = lightbulb.Loader()
 
-group = lightbulb.Group("commands.biography.name", "commands.biography.description", dm_enabled=False, localize=True)
+group = lightbulb.Group("commands.biography.name", "commands.biography.description", contexts=(hikari.ApplicationContextType(0), ), localize=True)
 
 
 @group.register
@@ -11,7 +11,6 @@ class MarmeladkaBioCommand(
     lightbulb.SlashCommand,
     name="commands.marmeladkabio.name",
     description="commands.marmeladkabio.description",
-    dm_enabled=False,
     localize=True
 ):
     @lightbulb.invoke
@@ -35,7 +34,6 @@ class ZefirkaBioCommand(
     lightbulb.SlashCommand,
     name="commands.zefirkabio.name",
     description="commands.zefirkabio.description",
-    dm_enabled=False,
     localize=True
 ):
     @lightbulb.invoke
@@ -59,7 +57,6 @@ class ShocomelkaBioCommand(
     lightbulb.SlashCommand,
     name="commands.shocomelkabio.name",
     description="commands.shocomelkabio.description",
-    dm_enabled=False,
     localize=True
 ):
     @lightbulb.invoke
@@ -82,7 +79,6 @@ class MilkaBioCommand(
     lightbulb.SlashCommand,
     name="commands.milkabio.name",
     description="commands.milkabio.description",
-    dm_enabled=False,
     localize=True
 ):
     @lightbulb.invoke

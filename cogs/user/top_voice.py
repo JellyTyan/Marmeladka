@@ -2,7 +2,8 @@ import hikari
 import lightbulb
 import pendulum
 
-from database.database_manager import DatabaseManager, UserData
+from database.database_manager import DatabaseManager
+from database.models import UserData
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
@@ -17,7 +18,7 @@ class TopVoiceCommand(
     lightbulb.SlashCommand,
     name="commands.topvoice.name",
     description="commands.topvoice.description",
-    dm_enabled=False,
+    contexts=(hikari.ApplicationContextType(0),),
     localize=True
 ):
 
@@ -29,7 +30,7 @@ class TopVoiceCommand(
             top_users_list = await session.scalars(stmt)
             await session.aclose()
 
-        title = "**Топ 10 пользователей по длительности нахождения в голосовых каналах:**\n\n"
+        title = "**Top 10 users by voice acitivity:**\n\n"
 
         guild_id = ctx.guild_id
         if guild_id is None:

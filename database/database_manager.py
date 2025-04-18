@@ -1,53 +1,10 @@
 import logging
 
-from sqlalchemy import Boolean, Integer, String
-from sqlalchemy.ext.asyncio import (
-    AsyncAttrs,
-    create_async_engine,
-)
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.ext.asyncio import create_async_engine
+from .models import Base
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-class Base(AsyncAttrs, DeclarativeBase):
-    pass
-
-class UserData(Base):
-    __tablename__ = "user_data"
-
-    user_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(String(20), nullable=True)
-    message_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    invite_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    voice_time: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    bump_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    tag: Mapped[str] = mapped_column(String(50), nullable=True)
-    biography: Mapped[str] = mapped_column(String(50), nullable=True)
-    birthday_date: Mapped[str] = mapped_column(String(50), nullable=True)
-
-class NuclearData(Base):
-    __tablename__ = "nuclear_data"
-
-    user_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(String(20), nullable=True)
-    new_user: Mapped[int] = mapped_column(Boolean, nullable=False, default=True)
-    nuclear_mode: Mapped[int] = mapped_column(Boolean, nullable=False, default=False)
-    bomb_start_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    mivina_start_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    bomb_cd: Mapped[str] = mapped_column(String(50), nullable=True, default="")
-    mivina_cd: Mapped[str] = mapped_column(String(50), nullable=True, default="")
-
-class NuclearLogs(Base):
-    __tablename__ = "nuclear_logs"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    username: Mapped[str] = mapped_column(String(20), nullable=True)
-    date: Mapped[str] = mapped_column(String(50), nullable=True)
-    used: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    log_type: Mapped[str] = mapped_column(String(10), nullable=False)
-
 
 class DatabaseManager:
     _instance = None
@@ -58,7 +15,7 @@ class DatabaseManager:
             cls._instance._initialized = False
         return cls._instance
 
-    def __init__(self, db_url: str = "sqlite+aiosqlite:///database/database.sql", echo: bool = False):
+    def __init__(self, db_url: str = "postgresql+asyncpg://marmeladka_user:marmeladkabot@localhost/marmeladka_db", echo: bool = False):
         if self._initialized:
             return
 

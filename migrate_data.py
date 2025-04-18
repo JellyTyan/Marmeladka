@@ -1,0 +1,151 @@
+import asyncio
+import aiosqlite
+import asyncpg
+from datetime import datetime
+
+SQLITE_DB = "database/database.sql"
+POSTGRES_DSN = "postgresql://marmeladka_user:marmeladkabot@localhost/marmeladka_db"
+
+def parse_date(date_str: str):
+    if not date_str:
+        return None
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").date()
+    except Exception:
+        return None
+
+async def create_tables(pg_conn):
+    create_user_data = """
+    CREATE TABLE IF NOT EXISTS user_data (
+        user_id BIGINT PRIMARY KEY,
+        username VARCHAR(30),
+        lang VARCHAR(5) DEFAULT 'en-EN',
+        message_count INTEGER NOT NULL DEFAULT 0,
+        invite_count INTEGER NOT NULL DEFAULT 0,
+        voice_time INTEGER NOT NULL DEFAULT 0,
+        bump_count INTEGER NOT NULL DEFAULT 0,
+        tag TEXT,
+        biography TEXT,
+        birthday_date DATE
+    );
+    """
+    create_nuclear_data = """
+    CREATE TABLE IF NOT EXISTS nuclear_data (
+        user_id BIGINT PRIMARY KEY,
+        username VARCHAR(30),
+        new_user BOOLEAN NOT NULL DEFAULT TRUE,
+        nuclear_mode BOOLEAN NOT NULL DEFAULT FALSE,
+        bomb_start_count INTEGER NOT NULL DEFAULT 0,
+        mivina_start_count INTEGER NOT NULL DEFAULT 0,
+        bomb_cd DATE,
+        mivina_cd DATE
+    );
+    """
+    create_nuclear_logs = """
+    CREATE TABLE IF NOT EXISTS nuclear_logs (
+        id BIGINT PRIMARY KEY,
+        user_id BIGINT NOT NULL,
+        username VARCHAR(20),
+        date DATE,
+        used BOOLEAN NOT NULL DEFAULT FALSE,
+        log_type VARCHAR(10) NOT NULL
+    );
+    """
+    await pg_conn.execute(create_user_data)
+    await pg_conn.execute(create_nuclear_data)
+    await pg_conn.execute(create_nuclear_logs)
+    print("Таблицы созданы.")
+
+async def migrate_user_data(sqlite_conn, pg_conn):
+    query = """
+        SELECT user_id, username, message_count, invite_count, voice_time, bump_count, tag, biography, birthday_date
+        FROM user_data
+    """
+    async with sqlite_conn.execute(query) as cursor:
+        rows = await cursor.fetchall()
+        for row in rows:
+            user_id, username, message_count, invite_count, voice_time, bump_count, tag, biography, birthday_date = row
+            birthday = parse_date(birthday_date)
+            lang = "en-EN"
+            try:
+                await pg_conn.execute(
+                    """
+                    INSERT INTO user_data
+                    (user_id, username, lang, message_count, invite_count, voice_time, bump_count, tag, biography, birthday_date)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                    """,
+                    user_id, username, lang, message_count, invite_count, voice_time, bump_count, tag, biography, birthday
+                )
+            except Exception as e:
+                print(f"Ошибка вставки для user_data user_id={user_id}: {e}")
+
+async def migrate_nuclear_data(sqlite_conn, pg_conn):
+    query = """
+        SELECT user_id, username, new_user, nuclear_mode, bomb_start_count, mivina_start_count, bomb_cd, mivina_cd
+        FROM nuclear_data
+    """
+    async with sqlite_conn.execute(query) as cursor:
+        rows = await cursor.fetchall()
+        for row in rows:
+            user_id, username, new_user, nuclear_mode, bomb_start_count, mivina_start_count, bomb_cd, mivina_cd = row
+            bomb_date = parse_date(bomb_cd)
+            mivina_date = parse_date(mivina_cd)
+            new_user_bool = bool(new_user) if new_user is not None else None
+            nuclear_mode_bool = bool(nuclear_mode) if nuclear_mode is not None else None
+            try:
+                await pg_conn.execute(
+                    """
+                    INSERT INTO nuclear_data
+                    (user_id, username, new_user, nuclear_mode, bomb_start_count, mivina_start_count, bomb_cd, mivina_cd)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                    """,
+                    user_id, username, new_user_bool, nuclear_mode_bool, bomb_start_count, mivina_start_count, bomb_date, mivina_date
+                )
+            except Exception as e:
+                print(f"Ошибка вставки для nuclear_data user_id={user_id}: {e}")
+
+async def migrate_nuclear_logs(sqlite_conn, pg_conn):
+    query = """
+        SELECT id, user_id, username, date, used, log_type
+        FROM nuclear_logs
+    """
+    async with sqlite_conn.execute(query) as cursor:
+        rows = await cursor.fetchall()
+        for row in rows:
+            log_id, user_id, username, date_str, used, log_type = row
+            log_date = parse_date(date_str)
+            used_bool = bool(used) if used is not None else None
+            try:
+                await pg_conn.execute(
+                    """
+                    INSERT INTO nuclear_logs
+                    (id, user_id, username, date, used, log_type)
+                    VALUES ($1, $2, $3, $4, $5, $6)
+                    """,
+                    log_id, user_id, username, log_date, used_bool, log_type
+                )
+            except Exception as e:
+                print(f"Ошибка вставки для nuclear_logs id={log_id}: {e}")
+
+async def main():
+    sqlite_conn = await aiosqlite.connect(SQLITE_DB)
+    pg_conn = await asyncpg.connect(dsn=POSTGRES_DSN)
+
+    try:
+        await create_tables(pg_conn)
+
+        print("Миграция user_data...")
+        await migrate_user_data(sqlite_conn, pg_conn)
+
+        print("Миграция nuclear_data...")
+        await migrate_nuclear_data(sqlite_conn, pg_conn)
+
+        print("Миграция nuclear_logs...")
+        await migrate_nuclear_logs(sqlite_conn, pg_conn)
+
+        print("Миграция завершена.")
+    finally:
+        await sqlite_conn.close()
+        await pg_conn.close()
+if __name__ == "__main__":
+    asyncio.run(main())

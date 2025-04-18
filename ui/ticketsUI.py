@@ -1,3 +1,4 @@
+import logging
 import hikari
 import miru
 
@@ -6,6 +7,8 @@ from config.config_manager import ConfigManager
 from utils.create_embed import create_embed
 
 config_manager = ConfigManager()
+
+logger = logging.getLogger(__name__)
 
 class TicketsView(miru.View):
     def __init__(self, *args, **kwargs) -> None:
@@ -108,7 +111,7 @@ class AcceptButton(miru.Button):
         thread = await ctx.client.rest.fetch_channel(ctx.channel_id)
 
         if not isinstance(thread, hikari.GuildThreadChannel):
-            print("not thread")
+            logger.info("not thread")
             return
 
         await ctx.respond("Thank you!")

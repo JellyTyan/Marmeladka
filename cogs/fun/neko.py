@@ -7,7 +7,7 @@ from functions.anime_func import get_nekos_gif
 
 loader = lightbulb.Loader()
 
-group = lightbulb.Group("commands.anime.name", "commands.anime.description", dm_enabled=False, localize=True)
+group = lightbulb.Group("commands.anime.name", "commands.anime.description", contexts=(hikari.ApplicationContextType(0), ), localize=True)
 
 
 @group.register

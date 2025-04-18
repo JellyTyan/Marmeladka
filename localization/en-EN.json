@@ -1,0 +1,226 @@
+{
+    "suicide": {
+        "fail": "Sorry, but you can't..."
+    },
+    "arsenal": {
+        "new_user": [
+            {
+                "title": "Welcome, newcomer, to the Nuke system!",
+                "description": "Nuke is a unique development on Discord. Nuke is not the future, it is the present. Has your conversation reached a dead end? Launch the Nuke! It won’t be able to do anything for 5 minutes! But be ready to get a counterattack in the very next second. \nLET THE NUCLEAR WAR BEGIN!"
+            },
+            {
+                "title": "Welcome, newcomer, to the Nuke system!",
+                "description": "And now I will explain how to use it. \nYou need to remember two phrases: ```Give me the nuke remote``` and ```Give me the Mivinka```\nWith these, I understand that you need an arsenal.\nYou can receive the arsenal once per day.\nTo request it, use the command ```/case```\n\nNow you’ve got a nuke or a Mivinka. At your disposal, you have a launch button and a medkit.\nPressing the **launch button** (command) ```/nuclear *user*``` sends a nuke to your target.\n**Mivinka** is needed to heal yourself if you get hit by a nuke. To heal, ask me in DM: ```/mivinka```.\nYou cannot launch a nuke at Sweeties or other bots. \nCome on! Get your first nuke right now!\n\nTraining is over! Good luck, General!"
+            }
+        ],
+        "nuclear_off": "Nuclear mode is off. Would you like to turn it on?",
+        "arsenal_profile": "Your profile"
+    },
+    "start_bomb": {
+        "nuclear_off": "Your nuclear mode is off!",
+        "arsenal_empty": "Your nuclear arsenal is empty, General!",
+        "target_nuclear_off": "Your target's nuclear mode is off!",
+        "target_suffering": "Your target is already suffering!",
+        "bot_protection": "Sorry, I cannot allow that.",
+        "self_bomb": "Are you sure you want to launch a nuke on yourself?",
+        "hirohito": "Oh no! {author} {target}, the nuke did a Hirohito and blew you both up",
+        "hit_target": "{target}\n**Attention! You are receiving a nuclear payload {bomb} from**\n{author}",
+        "failed": "Oops. The nuke failed. It seems it is too old.",
+        "dm_alert": "GENERAL! NOW IS NOT THE TIME TO DOZE OFF!\n\n{author} launched {bomb} at us with their weapon and we’re suffering from it!\nGrab your Mivinka and get into battle!\n`/mivinka`",
+        "mivina_help": "Hello! A nuke was launched at you.\nTo heal, use the command `/mivinka` in a DM with me..."
+    },
+    "mivina": {
+        "no_member": "Mivinkas are finished, General! Unfortunately, I can’t help you!",
+        "no_mivina": "Mivinkas are finished, General! Unfortunately, I can’t help you!",
+        "healthy": "Sir, you're okay!",
+        "success_dm": "Roger that, General! Hope this never happens again!",
+        "success": "{user}\n**Enjoyed some treats**",
+        "not_success": "Take a napkin, General…**",
+        "bad_mivina": "{user}\nBotched the Mivinka and added Beanz from Vafelka that came as a set. {user} got sick. It seems the Beanz were expired. Why?",
+        "error": "Apologies, an unknown error occurred."
+    },
+    "nuclear_case": {
+        "new_user": "Welcome, General, to the Nuclear system! Type `/arsenal` for details."
+    },
+    "nuclear_ui": {
+        "nuclear_code_phrase": "give me the nuke remote",
+        "mivina_code_phrase": "give me the mivinka",
+        "nuclear_mode_off": "You saw a case in front of you. It had written on it: 'Enter the code phrase and an arsenal will appear in the case'.\n\nYou entered the code word, but the case turned into the word 'Declined'. It seems you need to activate nuclear mode...",
+        "bomb_success": "You saw a case in front of you. It had written on it: 'Enter the code phrase and an arsenal will appear in the case'.\n\nYou entered the code word and the case opened. Inside, you found a nuke. You take it for yourself.\n\n `+1 nuke in your arsenal`",
+        "bomb_cooldown": "You saw a case in front of you. It had written on it: 'Enter the code phrase and an arsenal will appear in the case'.\n\nYou entered the code word and the case opened. It was empty inside. It seems you should come back tomorrow for new armaments...",
+        "mivina_success": "You saw a case in front of you. It had written on it: 'Enter the code phrase and an arsenal will appear in the case'.\n\nYou entered the code word and the case opened. Inside, you found a Mivinka. You take it for yourself.\n\n `+1 Mivinka in your arsenal`",
+        "mivina_cooldown": "You saw a case in front of you. It had written on it: 'Enter the code phrase and an arsenal will appear in the case'.\n\nYou entered the code word and the case opened. It was empty inside. It seems you should come back tomorrow for new armaments...",
+        "wrong_codeword": "You saw a case in front of you. It had written on it: 'Enter the code phrase and an arsenal will appear in the case'.\n\nYou entered the wrong word. The case closed and you were rejected.",
+        "nuclear_mode_enabled": "Nuclear mode is enabled!",
+        "nuclear_mode_disable_prompt": "You have already disabled the nuke! Please wait {hours}h {minutes}m.",
+        "nuclear_mode_disable_confirm": "Disable Nuclear Mode",
+        "nuclear_mode_disable_desc": "Are you sure you want to disable nuclear mode? In doing so, you declare disarmament and will no longer have access to the Nuke system! You are 'pharmacy!'",
+        "nuclear_mode_disabled": "Thank you for using the Nuke system. We await your return, General!",
+        "self_bomb_success": "Alright...\n{user_mention}\n**You got an incoming from**\n{user_mention}",
+        "self_bomb_failed": "Oops. The nuke didn’t work. It seems it is too old."
+    },
+    "help_command": {
+        "title": "My commands:",
+        "first_description": "You are on a simple and cozy Zheleshka server! \n\nUnique (almost) bots and features.\n **Let’s start the nuclear war!**\nServer owner: {guild_owner.mention}\nServer creation date: `{guild.created_at.strftime(\"%d-%m-%Y\")}`\nTotal members: `{len(guild.get_members())}`\nCurrent legend: {legends[0].mention}",
+        "second_description": "`/bio` - information about the sweets.\n`/profile` - user profile.\n`/top` - leaderboards in various categories.\n`/cute` - cute pictures of animals.\n`/emotion` - hugs, kisses, etc.\n`/nuke`, `/arsenal` - control the Nuke system.\n`/suicide` - Press F.\n`/random-number` - random number."
+    },
+    "random_number_command": {
+        "response": "Random number: {random_num}"
+    },
+    "clear_command": {
+        "response": "Cleared {amount} messages."
+    },
+    "edit_profile_button": {
+        "label": "Edit Profile"
+    },
+    "edit_profile_modal": {
+        "title": "Edit Profile",
+        "tag": {
+            "label": "Tag",
+            "placeholder": "Enter desired tag"
+        },
+        "bio": {
+            "label": "Biography",
+            "placeholder": "Enter biography"
+        },
+        "birth": {
+            "label": "Birthdate, format mm-dd (07-31)",
+            "placeholder": "07-31"
+        }
+    },
+    "edit_profile_callback": {
+        "success": "Profile edited successfully!",
+        "error": "An error occurred while editing the profile!"
+    },
+    "MainView": {
+        "rules_select": {
+            "placeholder": "📚 ┋ Server member rules",
+            "options": {
+                "General_Provisions": {
+                    "embed": {
+                        "title": "🎉__Community General Provisions__",
+                        "description": "╔════════════════ ❀•°❀°•❀ ════════════════╗\n\n1️⃣ **Respect other users.**\n2️⃣ **Any NSFW content is prohibited.**\n3️⃣ **Abuse of Caps Lock is prohibited** (except for abbreviations).\n4️⃣ **Any type of flooding outside the designated channel (#flood-chat) is prohibited.**\n5️⃣ **Discussions on political, religious, and similar topics should be held in DMs.**\n6️⃣ **Promotion of alcohol, drugs, or smoking is prohibited.**\n7️⃣ **Terrorist symbols, incitement to violence, and extremism are prohibited.**\n\n╚════════════════ ❀•°❀°•❀ ════════════════╝",
+                        "footer": "Please familiarize yourself with these rules and follow them for a comfortable conversation!"
+                    }
+                },
+                "Restrictions_links": {
+                    "embed": {
+                        "title": "📢__ **Restrictions on links and advertising:**__",
+                        "description": "╔════════════════ ❀•°❀°•❀ ════════════════╗\n\n1️⃣ **Advertising is prohibited** without approval from Jelly.\n2️⃣ **Publishing or distributing viral links** and links to torrents is prohibited.\n3️⃣ **Publishing or distributing links** to:\n- Payment processing platforms\n- Donation services\n- Sponsorship and similar\n\n╚════════════════ ❀•°❀°•❀ ════════════════╝",
+                        "footer": "Please familiarize yourself with these rules and follow them for a comfortable conversation!"
+                    }
+                },
+                "Voice_Chat": {
+                    "embed": {
+                        "title": "__Voice Chat Rules__",
+                        "description": "╔════════════════ ❀•°❀°•❀ ════════════════╗\n\n1️⃣ **Avoid loud sounds**: do not make sharp noises into the microphone and do not abuse the sound panel.\n2️⃣ **Use Push-To-Talk** if there is a lot of noise around you.\n\n🔊 Respect other participants to create a comfortable atmosphere for communication!\n\n╚════════════════ ❀•°❀°•❀ ════════════════╝",
+                        "footer": "Please familiarize yourself with these rules and follow them for a comfortable conversation!"
+                    }
+                },
+                "Nickname_Usage": {
+                    "embed": {
+                        "title": "__Nickname Usage Rules__",
+                        "description": "╔════════════════ ❀•°❀°•❀ ════════════════╗\n\n1️⃣ If your nickname cannot be mentioned, it will be changed by the administration.\n2️⃣ **The General Provisions of the server rules apply to nicknames.**\n\n💡 **Tip:** Make sure your nickname is easily readable and does not violate the general rules!\n\n╚════════════════ ❀•°❀°•❀ ════════════════╝",
+                        "footer": "Please familiarize yourself with these rules and follow them for a comfortable conversation!"
+                    }
+                },
+                "Private_Channels": {
+                    "embed": {
+                        "title": "__Private Channels Rules__",
+                        "description": "╔════════════════ ❀•°❀°•❀ ════════════════╗\n\n1️⃣ Private channel names **must not include**:\n- Links\n- Insults\n- Advertising\n- Promotion of alcohol, drugs, or smoking\n\n⚠️ **Important:** The content of private channels **is not moderated**, and complaints about messages from them will be rejected.\n\n╚════════════════ ❀•°❀°•❀ ════════════════╝",
+                        "footer": "Please familiarize yourself with these rules and follow them for a comfortable conversation!"
+                    }
+                }
+            }
+        },
+        "functions_select": {
+            "placeholder": "🛠️ ┋ Server functionality",
+            "options": {
+                "Sweets": {
+                    "embed": {
+                        "title": "__Sweets__",
+                        "description": "There are 4 assistants on the server:\n\n🧡 **Marmeladka** 🧡\n\n🤍 **Zefirka** 🤍\n\n🤎 **Shocomelka**\n\n 🤎💜**Milka**💜\n\n__Learn about each one by clicking the buttons below!__"
+                    }
+                },
+                "Customization": {
+                    "embed": {
+                        "title": "__Customization__",
+                        "description": "This section is all about customization!"
+                    }
+                },
+                "Language": {
+                    "embed": {
+                        "title": "__Language__",
+                        "description": "Change your language!"
+                    }
+                }
+            }
+        }
+    },
+    "SelectMainBots": {
+        "placeholder": "🧁 ┋ Who's up now?",
+        "options": {
+            "Marmeladka": {
+                "embed": {
+                    "title": "__Marmeladka__",
+                    "description": "The main fox on this server, executing all the key functions—even providing you with this information. Learn all about her commands with `/help`."
+                }
+            },
+            "Zefirka": {
+                "embed": {
+                    "title": "__Zefirka__",
+                    "description": "According to the lore, she is Marmeladka’s schizophrenia. The top DJ of the server. She will play any tune for you from popular streaming platforms: YouTube Music, SoundCloud, Spotify, Apple Music."
+                }
+            },
+            "Shocomelka": {
+                "embed": {
+                    "title": "__Shocomelka__",
+                    "description": "A friend of Marmeladka and Zefirka (she’s a tanuki, i.e. a raccoon dog). She lounges on her throne playing Lo-Fi music. She wants to bring harmony to this world."
+                }
+            },
+            "Milka": {
+                "embed": {
+                    "title": "__Milka__",
+                    "description": "If you ask around, she’s the top Kitsune, though her role is a bit less critical. She teams up with the main DJ, Zefirka, to fire up the server!"
+                }
+            },
+            "Kriska": {
+                "embed": {
+                    "title": "__Kriska__",
+                    "description": "This is Kriska, she’s new here but has already won everyone over. She can do many things, but most importantly, she is always there for you. She plays absolutely any kind of music."
+                }
+            }
+        }
+    },
+    "SelectColor": {
+        "placeholder": "🌈 ┋ Choose a color",
+        "response_messages": {
+            "remove": "You have removed your color",
+            "change": "You changed your nickname color to {}",
+            "invalid": "Invalid option",
+            "error": "Oh no! This error occured: {error}"
+        }
+    },
+    "biography_commands": {
+        "marmeladka": {
+            "title": "Hi, I'm Marmeladka!",
+            "description": "🦊✨ A fox of care and coziness on the Zheleshka server! ✨🦊\n❤️ Warmth, care, and attention are my superpower! ❤️\n🍵 I perform the main functions of the server to keep things cozy and fun for you! 🍪\n🌈 And do you know why I'm called Marmeladka? They say I'm as sweet as marmalade, and I can warm your heart even on a tough day! 🌟💛",
+            "image_url": "https://static.zerochan.net/Senko.%28Sewayaki.Kitsune.no.Senko-san%29.full.2738566.jpg"
+        },
+        "zefirka": {
+            "title": "Hi, I'm Zefirka!",
+            "description": "🦊🍡 A poor and hungry little fox! 🍡🦊\n🎶 I help you relax and enjoy the music on the server. 🎧\n🌙 They say my playlists take you straight into a dream world... ✨\n🌟 A bit mysterious, but always on your side! 💫",
+            "image_url": "https://safebooru.org//samples/3072/sample_af8dc25e5edbf26c3fb0981dbd2f917fc55513eb.jpg?5213035"
+        },
+        "shocomelka": {
+            "title": "Hi, I'm Shocomelka!",
+            "description": "🎵✨ A cute little raccoon who knows how to create an atmosphere. ✨🎵\n🍫 I pick music according to your mood—from soft lo-fi to inspiring melodies. 🎼\n🛋️ Come to the stage, grab a blanket and a cup of cocoa—I’ll make sure you’re cozy. ☕💛",
+            "image_url": "https://preview.redd.it/7x5n9tieagd41.png?auto=webp&s=ba3405f28de9a249e1c9972bb8a3214876ede29d"
+        },
+        "milka": {
+            "title": "Hi, I'm Milka!",
+            "description": "🍫 A slightly different version of Zefirka—softer and more cheerful! 🍫\n🥛 I love coziness and tranquility. I believe softness is my superpower. ☁️\n🌸 Together, we'll make our server special! 💖",
+            "image_url": "https://static.wikia.nocookie.net/mudae/images/0/05/Yozora_%28SKnS%292.png/revision/latest/scale-to-width/360?cb=20210420071604"
+        }
+    }
+}

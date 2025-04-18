@@ -17,7 +17,7 @@ class HelpCommand(
     lightbulb.SlashCommand,
     name="commands.help.name",
     description="commands.help.description",
-    dm_enabled=False,
+    contexts=(hikari.ApplicationContextType(0),),
     localize=True
 ):
     @lightbulb.invoke
@@ -74,7 +74,7 @@ class RandomNumberCommand(
     lightbulb.SlashCommand,
     name="commands.randomnumber.name",
     description="commands.randomnumber.description",
-    dm_enabled=False,
+    contexts=(hikari.ApplicationContextType(0),),
     localize=True
 ):
     first_number = lightbulb.integer("commands.randomnumber.options.first_number.name", "commands.randomnumber.options.first_number.description", localize=True)
@@ -92,7 +92,7 @@ class ClearCommand(
     lightbulb.SlashCommand,
     name="commands.clear.name",
     description="commands.clear.description",
-    dm_enabled=False,
+    contexts=(hikari.ApplicationContextType(0),),
     default_member_permissions=hikari.Permissions.MANAGE_MESSAGES,
     localize=True
 ):

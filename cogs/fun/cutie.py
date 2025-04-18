@@ -7,7 +7,7 @@ import functions.cutie_func as cutieFunc
 
 loader = lightbulb.Loader()
 
-group = lightbulb.Group("commands.cutie.name", "commands.cutie.description", dm_enabled=False, localize=True)
+group = lightbulb.Group("commands.cutie.name", "commands.cutie.description", contexts=(hikari.ApplicationContextType(0), ), localize=True)
 
 @group.register
 class FrogImage(

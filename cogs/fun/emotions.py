@@ -9,7 +9,7 @@ from utils.create_embed import create_embed
 
 loader = lightbulb.Loader()
 
-group = lightbulb.Group("commands.emotions.name", "commands.emotions.description", dm_enabled=False, localize=True)
+group = lightbulb.Group("commands.emotions.name", "commands.emotions.description", contexts=(hikari.ApplicationContextType(0), ), localize=True)
 
 
 @group.register
@@ -229,7 +229,6 @@ class SmileCommand(
     @lightbulb.invoke
     async def smile_command(self, ctx: lightbulb.Context, bot: hikari.GatewayBot) -> None:
         image_url = await get_nekos_gif("smile")
-        print(image_url)
         embed = create_embed(
             description=f"{ctx.user.mention}\n**Smiles**))",
             color=0x2B2D31,

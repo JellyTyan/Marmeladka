@@ -164,3 +164,7 @@ tests
 test
 Profile
 database/database.sql
+migrations
+.DS_Store
+alembic
+other/logs

@@ -1,19 +1,20 @@
-from database.database_manager import DatabaseManager, UserData
-from sqlalchemy.ext.asyncio import async_sessionmaker
+from database.database_manager import DatabaseManager
+from database.models import UserData
+from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from sqlalchemy import select
 
-class UserProfileFunc():
+
+class UserProfileFunc:
     def __init__(self):
         self.db_manager = DatabaseManager()
-        self.session = async_sessionmaker(self.db_manager.engine, expire_on_commit=False)
+        self.session = async_sessionmaker(self.db_manager.engine, expire_on_commit=False, class_=AsyncSession)
 
-    async def get_bump_count(self, id: int) -> int:
-        """Get user bump count"""
+    async def get_bump_count(self, user_id: int) -> int:
+        """Получить количество "bump" для пользователя"""
         async with self.session() as session:
             async with session.begin():
-                stmt = select(UserData.bump_count).where(UserData.user_id == id)
+                stmt = select(UserData.bump_count).where(UserData.user_id == user_id)
                 bump_count = await session.scalar(stmt)
-                await session.aclose()
 
         return 0 if bump_count is None else bump_count
 
@@ -73,3 +74,25 @@ class UserProfileFunc():
                 await session.aclose()
 
         return "No tag" if tag is None else tag
+
+    async def get_lang(self, id:int) -> str:
+        """Get user lang"""
+        async with self.session() as session:
+            async with session.begin():
+                stmt = select(UserData.lang).where(UserData.user_id == id)
+                lang = await session.scalar(stmt)
+                await session.aclose()
+
+        return "en-EN" if lang is None else lang
+
+    async def set_lang(self, id:int, lang:str) -> None:
+        """Set user lang"""
+        async with self.session() as session:
+            async with session.begin():
+                stmt = select(UserData).where(UserData.user_id == id)
+                user = await session.scalar(stmt)
+                if user:
+                    user.lang = lang
+                else:
+                    session.add(UserData(user_id=id, lang=lang))
+                await session.commit()
