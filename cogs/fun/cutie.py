@@ -1,84 +1,57 @@
-import nekos
-import lightbulb
+import arc
 import hikari
-import asyncio
+import nekos
 
 import functions.cutie_func as cutieFunc
 
-loader = lightbulb.Loader()
+plugin = arc.GatewayPlugin("Cutie", invocation_contexts=[hikari.ApplicationContextType.GUILD])
 
-group = lightbulb.Group("commands.cutie.name", "commands.cutie.description", contexts=(hikari.ApplicationContextType(0), ), localize=True)
+cutie = plugin.include_slash_group("cutie", "So cuute!", autodefer=arc.AutodeferMode.ON)
 
-@group.register
-class FrogImage(
-    lightbulb.SlashCommand,
-    name="commands.frogimage.name",
-    description="commands.frogimage.description",
-    localize=True
-):
-    @lightbulb.invoke
-    async def invoke(self, ctx: lightbulb.Context) -> None:
-        frog_image_url = await cutieFunc.get_random_image(query='frog')
+@cutie.include
+@arc.slash_subcommand("ribbit", "Ribbit-ribbit-ribbit")
+async def frog_image(ctx: arc.GatewayContext) -> None:
+    frog_image_url = await cutieFunc.get_random_image(query='frog')
 
-        embed = hikari.Embed(description="Ribiir-ribbit-ribibit", color=0x53377A)
-        embed.set_image(frog_image_url)
-        embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
-        response = await ctx.respond(embed=embed)
-        await asyncio.sleep(300)
-        await ctx.delete_response(response)
+    embed = hikari.Embed(description="Ribiir-ribbit-ribibit", color=0x53377A)
+    embed.set_image(frog_image_url)
+    embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
+    await ctx.respond(embed=embed, delete_after=300)
 
 
-@group.register
-class CatImage(
-    lightbulb.SlashCommand,
-    name="commands.catimage.name",
-    description="commands.catimage.description",
-    localize=True
-):
-    @lightbulb.invoke
-    async def invoke(self, ctx: lightbulb.Context) -> None:
-        embed = hikari.Embed(description="Meeew :3", color=0x53377A)
-        embed.set_image(nekos.cat())
-        embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
-        response = await ctx.respond(embed=embed)
-        await asyncio.sleep(300)
-        await ctx.delete_response(response)
+@cutie.include
+@arc.slash_subcommand("meow", "Meow-meow-meow")
+async def cat_image(ctx: arc.GatewayContext) -> None:
+    embed = hikari.Embed(description="Meeew :3", color=0x53377A)
+    embed.set_image(nekos.cat())
+    embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
+    await ctx.respond(embed=embed, delete_after=300)
 
 
-@group.register
-class FoxImage(
-    lightbulb.SlashCommand,
-    name="commands.foximage.name",
-    description="commands.foximage.description",
-    localize=True
-):
-    @lightbulb.invoke
-    async def invoke(self, ctx: lightbulb.Context) -> None:
-        fox_image_url = await cutieFunc.get_random_fox_image()
+@cutie.include
+@arc.slash_subcommand("bark", "Bark-bark-bark")
+async def fox_image(ctx: arc.GatewayContext) -> None:
+    fox_image_url = await cutieFunc.get_random_fox_image()
 
-        embed = hikari.Embed(description="Frrr", color=0x53377A)
-        embed.set_image(fox_image_url)
-        embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
-        response = await ctx.respond(embed=embed)
-        await asyncio.sleep(300)
-        await ctx.delete_response(response)
+    embed = hikari.Embed(description="Frrr", color=0x53377A)
+    embed.set_image(fox_image_url)
+    embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
+    await ctx.respond(embed=embed, delete_after=300)
 
 
-@group.register
-class GooseImage(
-    lightbulb.SlashCommand,
-    name="commands.gooseimage.name",
-    description="commands.gooseimage.description",
-    localize=True
-):
-    @lightbulb.invoke
-    async def invoke(self, ctx: lightbulb.Context) -> None:
-        embed = hikari.Embed(description="HOOOOONK", color=0x53377A)
-        embed.set_image(await cutieFunc.get_goose_image("goose"))
-        embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
-        response = await ctx.respond(embed=embed)
-        await asyncio.sleep(300)
-        await ctx.delete_response(response)
+@cutie.include
+@arc.slash_subcommand("honk", "Hooooonk")
+async def goose_image(ctx: arc.GatewayContext) -> None:
+    embed = hikari.Embed(description="HOOOOONK", color=0x53377A)
+    embed.set_image(await cutieFunc.get_goose_image("goose"))
+    embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
+    await ctx.respond(embed=embed, delete_after=300)
 
 
-loader.command(group)
+@arc.loader
+def loader(client: arc.GatewayClient) -> None:
+    client.add_plugin(plugin)
+
+@arc.unloader
+def unloader(client: arc.GatewayClient) -> None:
+    client.remove_plugin(plugin)

@@ -1,22 +1,19 @@
+import arc
 import hikari
-import lightbulb
 
-from utils.guild import get_guild_categories, get_channels_in_category
+from utils.guild import get_channels_in_category, get_guild_categories
 
-loader = lightbulb.Loader()
+plugin = arc.GatewayPlugin("PrivateVoice", invocation_contexts=(hikari.ApplicationContextType(0), ))
 
-@loader.command
-class SetupPrivateVoiceCommnad(
-    lightbulb.SlashCommand,
-    name="setup-private-voice",
-    description="Setup private voice channelks",
-    contexts=(hikari.ApplicationContextType(0),),
-    default_member_permissions=hikari.Permissions.MANAGE_GUILD,
-):
-    @lightbulb.invoke
-    async def setup_command(self, ctx: lightbulb.Context) -> None:
-        await ctx.defer(ephemeral=True)
 
+@plugin.include
+@arc.slash_command(
+    "setup-private-voice",
+    "Setup private voice channels",
+    default_permissions=hikari.Permissions.MANAGE_GUILD,
+    autodefer=arc.AutodeferMode.EPHEMERAL
+    )
+async def setup_voice_command(ctx: arc.GatewayContext) -> None:
         guild_id = ctx.guild_id
         if not guild_id:
             return
@@ -50,3 +47,11 @@ class SetupPrivateVoiceCommnad(
             create_private_voice_id = created.id
 
         await ctx.respond("✅ Приватная голосовая категория и канал готовы.")
+
+@arc.loader
+def loader(client: arc.GatewayClient) -> None:
+    client.add_plugin(plugin)
+
+@arc.unloader
+def unloader(client: arc.GatewayClient) -> None:
+    client.remove_plugin(plugin)

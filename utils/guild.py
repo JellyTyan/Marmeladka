@@ -1,5 +1,6 @@
-import hikari
 from typing import Union
+
+import hikari
 
 
 async def get_guild_categories(bot: hikari.RESTAware, guild_id: int) -> list[hikari.GuildCategory]:

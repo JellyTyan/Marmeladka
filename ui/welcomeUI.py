@@ -1,12 +1,12 @@
 import json
+from typing import Optional
+
 import hikari
 import miru
 
-from utils.create_embed import create_embed
-from ui.profileUI import EditProfileButton
-from typing import Optional
 from functions.user_profile_func import UserProfileFunc
-
+from ui.profileUI import EditProfileButton
+from utils.create_embed import create_embed
 
 role_color_mapping = {
     "Red": 1106244113587785829,

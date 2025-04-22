@@ -1,5 +1,6 @@
-import yaml
 import random
+
+import yaml
 
 
 def get_random_gif(type: str):

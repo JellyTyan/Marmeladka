@@ -1,5 +1,7 @@
 import os
+
 from dotenv import load_dotenv
+
 
 class ConfigManager:
     def __init__(self, mode='dev'):

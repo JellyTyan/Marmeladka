@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "marmeladka"
+version = "0.1.0"
+description = "Cute and helpful discord bot"
+authors = ["JellyTyan <lycomilopster@gmail.com>"]
+license = "MIT"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+
+hikari-arc = { git = "https://github.com/hypergonial/hikari-arc" }
+hikari-miru = "4.2.0"
+hikari = { version = "2.2.1", extras = ["voice"] }
+python-dotenv = "1.1.0"
+pyyaml = "6.0.2"
+aiohttp = "3.11.18"
+"nekos.py" = "1.1.0"
+pendulum = "3.1.0"
+pillow = "11.2.1"
+asyncpg = "*"
+psycopg2-binary = "*"
+SQLAlchemy = "2.0.40"
+greenlet = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+
+[tool.mypy]
+strict = true
+
+[tool.ruff]
+select = ["E", "F", "W", "I"]
+line-length = 100

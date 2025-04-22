@@ -1,9 +1,9 @@
 import logging
+
 import hikari
 import miru
 
 from config.config_manager import ConfigManager
-
 from utils.create_embed import create_embed
 
 config_manager = ConfigManager()

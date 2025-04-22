@@ -1,7 +1,8 @@
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+
 from database.database_manager import DatabaseManager
 from database.models import UserData
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
-from sqlalchemy import select
 
 
 class UserProfileFunc:

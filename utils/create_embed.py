@@ -1,7 +1,6 @@
-import hikari
-from typing import Optional
+from typing import Optional, Union
 
-from typing import Union
+import hikari
 
 
 def create_embed(

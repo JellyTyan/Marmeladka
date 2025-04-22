@@ -1,15 +1,15 @@
-import lightbulb
+import arc
 import hikari
 
-from utils.create_embed import create_embed
 from config.config_manager import ConfigManager
+from utils.create_embed import create_embed
 
 config_manager = ConfigManager()
 
-loader = lightbulb.Loader()
+plugin = arc.GatewayPlugin("UkrTrain")
 
 
-@loader.listener(hikari.MemberCreateEvent)
+@plugin.listen(hikari.MemberCreateEvent)
 async def on_member_join(event: hikari.MemberCreateEvent) -> None:
     member = event.member
 
@@ -18,7 +18,7 @@ async def on_member_join(event: hikari.MemberCreateEvent) -> None:
 
     if member:
         UKR_CHANNEL_ID = config_manager.get_config_value("UKR_CHANNEL_ID")
-        ukr_channel = await event.app.rest.fetch_channel(int(UKR_CHANNEL_ID))
+        ukr_channel = plugin.client.cache.get_guild_channel(int(UKR_CHANNEL_ID))
 
         if isinstance(ukr_channel, hikari.GuildTextChannel):
             embed = create_embed(
@@ -40,12 +40,12 @@ async def on_member_join(event: hikari.MemberCreateEvent) -> None:
         )
 
         try:
-            await member.send(content="||https://discord.com/invite/77keb7smna||", embed=embed_welcome_user)
+            await member.send(content="||https://discord.com/invite/77keb7smna||", embed=embed_welcome_user)  # noqa: E501
         except Exception:
             return
 
 
-@loader.listener(hikari.MemberDeleteEvent)
+@plugin.listen(hikari.MemberDeleteEvent)
 async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
     member = event.old_member
 
@@ -56,7 +56,7 @@ async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
         return
 
     UKR_CHANNEL_ID = config_manager.get_config_value("UKR_CHANNEL_ID")
-    ukr_channel = await event.app.rest.fetch_channel(int(UKR_CHANNEL_ID))
+    ukr_channel = plugin.client.cache.get_guild_channel(int(UKR_CHANNEL_ID))
 
     if isinstance(ukr_channel, hikari.GuildTextChannel):
         embed = create_embed(
@@ -65,3 +65,12 @@ async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
             image_url="https://cdn.discordapp.com/attachments/1109526498299359303/1138139334550241291/gman-toes.gif"
         )
         await ukr_channel.send(embed=embed)
+
+
+@arc.loader
+def loader(client: arc.GatewayClient) -> None:
+    client.add_plugin(plugin)
+
+@arc.unloader
+def unloader(client: arc.GatewayClient) -> None:
+    client.remove_plugin(plugin)

@@ -1,15 +1,15 @@
 import json
 
-import lightbulb
-import miru
+import arc
 import hikari
+import miru
 
-from ui.welcomeUI import MainView
 from ui.ticketsUI import TicketsView
+from ui.welcomeUI import MainView
 from utils.create_embed import create_embed
 
 
-async def check_info_view(bot: lightbulb.GatewayEnabledClient, cx: miru.Client):
+async def check_info_view(arc_client: arc.GatewayClient, cx: miru.Client):
     with open('config/hooks.json', 'r') as file:
         data = json.load(file)
 
@@ -19,7 +19,7 @@ async def check_info_view(bot: lightbulb.GatewayEnabledClient, cx: miru.Client):
 
     view = MainView()
     try:
-        info_message = await bot.rest.fetch_message(info_channel_json.get("channel_id"), info_message_id)
+        info_message = await arc_client.rest.fetch_message(info_channel_json.get("channel_id"), info_message_id)
 
         cx.start_view(view, bind_to=info_message)
 
@@ -43,7 +43,7 @@ async def check_info_view(bot: lightbulb.GatewayEnabledClient, cx: miru.Client):
 
         info_channel_id = info_channel_json["channel_id"]
 
-        message = await bot.rest.create_message(info_channel_id, embeds=[embedImg, embedMain], components=view)
+        message = await arc_client.rest.create_message(info_channel_id, embeds=[embedImg, embedMain], components=view)
 
         info_channel_json["message_id"] = message.id
 
@@ -53,7 +53,7 @@ async def check_info_view(bot: lightbulb.GatewayEnabledClient, cx: miru.Client):
         cx.start_view(view, bind_to=message)
 
 
-async def check_ticket_view(bot: lightbulb.GatewayEnabledClient, cx: miru.Client):
+async def check_ticket_view(arc_client: arc.GatewayClient, cx: miru.Client):
     with open('config/hooks.json', 'r') as file:
         data = json.load(file)
 
@@ -63,7 +63,7 @@ async def check_ticket_view(bot: lightbulb.GatewayEnabledClient, cx: miru.Client
 
     view = TicketsView()
     try:
-        info_message = await bot.rest.fetch_message(ticket_channel_json.get("channel_id"), ticket_message_id)
+        info_message = await arc_client.rest.fetch_message(ticket_channel_json.get("channel_id"), ticket_message_id)
 
         cx.start_view(view, bind_to=info_message)
 
@@ -87,7 +87,7 @@ async def check_ticket_view(bot: lightbulb.GatewayEnabledClient, cx: miru.Client
 
         info_channel_id = ticket_channel_json["channel_id"]
 
-        message = await bot.rest.create_message(info_channel_id, embeds=[embedImg, embedMain], components=view)
+        message = await arc_client.rest.create_message(info_channel_id, embeds=[embedImg, embedMain], components=view)
 
         ticket_channel_json["message_id"] = message.id
 

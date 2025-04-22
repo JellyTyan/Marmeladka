@@ -1,72 +1,34 @@
 """ Module for generating random neko pictures"""
+import arc
 import hikari
-import lightbulb
-import asyncio
 
 from functions.anime_func import get_nekos_gif
 
-loader = lightbulb.Loader()
+plugin = arc.GatewayPlugin("NekoPy", invocation_contexts=(hikari.ApplicationContextType(0), ))
 
-group = lightbulb.Group("commands.anime.name", "commands.anime.description", contexts=(hikari.ApplicationContextType(0), ), localize=True)
-
-
-@group.register
-class NekoCommand(
-    lightbulb.SlashCommand,
-    name="commands.neko.name",
-    description="commands.neko.description",
-    localize=True
-):
-
-    @lightbulb.invoke
-    async def neko(self, ctx: lightbulb.Context) -> None:
-        response = await ctx.respond(embed=await build_embed("neko"))
-        await asyncio.sleep(300)
-        await ctx.delete_response(response)
+neko = plugin.include_slash_group("anime", "Anime images.", autodefer=arc.AutodeferMode.ON)
 
 
-@group.register
-class FoxCommand(
-    lightbulb.SlashCommand,
-    name="commands.fox.name",
-    description="commands.fox.description",
-    localize=True
-):
+@neko.include
+@arc.slash_subcommand("neko", "Cat-girls")
+async def neko_girl(ctx: arc.GatewayContext) -> None:
+    await ctx.respond(embed=await build_embed("neko"), delete_after=300)
 
-    @lightbulb.invoke
-    async def fox_girl(self, ctx: lightbulb.Context) -> None:
-        response = await ctx.respond(embed=await build_embed("kitsune"))
-        await asyncio.sleep(300)
-        await ctx.delete_response(response)
+@neko.include
+@arc.slash_subcommand("kitsune", "Foxy girls, huh?")
+async def kitsune_girl(ctx: arc.GatewayContext) -> None:
+        await ctx.respond(embed=await build_embed("kitsune"), delete_after=300)
 
 
-@group.register
-class WaifuCommand(
-    lightbulb.SlashCommand,
-    name="commands.waifu.name",
-    description="commands.waifu.description",
-    localize=True
-):
+@neko.include
+@arc.slash_subcommand("waifu", "Yours and not just wafu!")
+async def waifu(ctx: arc.GatewayContext) -> None:
+    await ctx.respond(embed=await build_embed("waifu"), delete_after=300)
 
-    @lightbulb.invoke
-    async def waifu(self, ctx: lightbulb.Context) -> None:
-        response = await ctx.respond(embed=await build_embed("waifu"))
-        await asyncio.sleep(300)
-        await ctx.delete_response(response)
-
-@group.register
-class HusbandoCommand(
-    lightbulb.SlashCommand,
-    name="commands.husbando.name",
-    description="commands.husbando.description",
-    localize=True
-):
-
-    @lightbulb.invoke
-    async def husbando(self, ctx: lightbulb.Context) -> None:
-        response = await ctx.respond(embed=await build_embed("husbando"))
-        await asyncio.sleep(300)
-        await ctx.delete_response(response)
+@neko.include
+@arc.slash_subcommand("husbando", "Yours and not just men!")
+async def husbando(ctx: arc.GatewayContext) -> None:
+    await ctx.respond(embed=await build_embed("husbando"), delete_after=300)
 
 # @commands.command()
 # async def hentai(self, ctx, api_type=""):
@@ -111,4 +73,11 @@ async def build_embed(x: str):
     embed.set_footer(text="The message will be deleted in 5 minutes.", icon="https://i.gifer.com/ZKZg.gif")
     return embed
 
-loader.command(group)
+
+@arc.loader
+def loader(client: arc.GatewayClient) -> None:
+    client.add_plugin(plugin)
+
+@arc.unloader
+def unloader(client: arc.GatewayClient) -> None:
+    client.remove_plugin(plugin)

@@ -1,11 +1,11 @@
-hikari==2.2.0
-hikari-lightbulb==3.0.0a16
+hikari-arc==2.1.0
 hikari-miru==4.2.0
 python-dotenv==1.1.0
 pyyaml==6.0.2
-aiohttp==3.11.14
+aiohttp==3.11.17
 nekos.py==1.1.0
-pendulum==3.0.0
-Pillow==11.1.0
+pendulum==3.1.0
+Pillow==11.2.1
 asyncpg
 psycopg2-binary
+hikari[voice]

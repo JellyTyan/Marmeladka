@@ -1,25 +1,25 @@
+import typing
+
+import arc
 import hikari
-import lightbulb
 import pendulum
 
-# from cogs.fun.nuclear import load
 from config.config_manager import ConfigManager
 
-loader = lightbulb.Loader()
+plugin = arc.GatewayPlugin("Logger")
 
 config_manager = ConfigManager()
 
 # <--------------------------------------------------### Message Events
 
-@loader.listener(hikari.GuildMessageDeleteEvent)
+@plugin.listen(hikari.GuildMessageDeleteEvent)
 async def on_message_delete(event: hikari.GuildMessageDeleteEvent) -> None:
     deleted_message = event.old_message
     if deleted_message:
         if deleted_message.author.is_bot:
             return
 
-        LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
-        log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
+        log_channel = get_log_channel()
 
         if isinstance(log_channel, hikari.GuildTextChannel):
             embed = hikari.Embed(
@@ -36,13 +36,13 @@ async def on_message_delete(event: hikari.GuildMessageDeleteEvent) -> None:
                 embed.add_field(name="Author", value=deleted_message.author.mention)
 
                 if deleted_message.attachments:
-                    for attachment in deleted_message.attachments:
-                        embed.set_image(attachment.url)
+                    if deleted_message.attachments:
+                        embed.set_image(deleted_message.attachments[0].url)
 
                 await log_channel.send(embed=embed)
 
 
-@loader.listener(hikari.GuildMessageUpdateEvent)
+@plugin.listen(hikari.GuildMessageUpdateEvent)
 async def on_message_edit(event: hikari.GuildMessageUpdateEvent) -> None:
     old_message = event.old_message
     new_message = event.message
@@ -57,13 +57,12 @@ async def on_message_edit(event: hikari.GuildMessageUpdateEvent) -> None:
         if old_message.content == new_message.content:
             return
 
-        LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
-        log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
+        log_channel = get_log_channel()
 
         if isinstance(log_channel, hikari.GuildTextChannel):
             embed = hikari.Embed(
                 title="Edit message",
-                description=f"**Original:**\n ```{old_message.content}```\n **Edited:**\n ```{new_message.content}```",
+                description=f"""**Original:**\n ```{old_message.content}```\n **Edited:**\n ```{new_message.content}```""",  # noqa: E501
                 color=0x0062FF,
                 timestamp=pendulum.now("Europe/Warsaw")
                 )
@@ -79,7 +78,7 @@ async def on_message_edit(event: hikari.GuildMessageUpdateEvent) -> None:
 
 # <--------------------------------------------------### Member events
 
-@loader.listener(hikari.MemberCreateEvent)
+@plugin.listen(hikari.MemberCreateEvent)
 async def on_member_join(event: hikari.MemberCreateEvent) -> None:
     member = event.member
 
@@ -87,8 +86,7 @@ async def on_member_join(event: hikari.MemberCreateEvent) -> None:
         return
 
     if member:
-        LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
-        log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
+        log_channel = get_log_channel()
 
         if isinstance(log_channel, hikari.GuildTextChannel):
             embed = hikari.Embed(
@@ -102,7 +100,7 @@ async def on_member_join(event: hikari.MemberCreateEvent) -> None:
 
             await log_channel.send(embed=embed)
 
-@loader.listener(hikari.MemberDeleteEvent)
+@plugin.listen(hikari.MemberDeleteEvent)
 async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
     member = event.old_member
 
@@ -112,8 +110,7 @@ async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
     if member.is_bot:
         return
 
-    LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
-    log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
+    log_channel = get_log_channel()
 
     if isinstance(log_channel, hikari.GuildTextChannel):
         embed = hikari.Embed(
@@ -129,7 +126,7 @@ async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
 
 # <--------------------------------------------------### Voice events
 
-@loader.listener(hikari.VoiceStateUpdateEvent)
+@plugin.listen(hikari.VoiceStateUpdateEvent)
 async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
     before = event.old_state
     after = event.state
@@ -141,8 +138,7 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
     if member.is_bot:
         return
 
-    LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
-    log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
+    log_channel = get_log_channel()
 
     if isinstance(log_channel, hikari.GuildTextChannel):
         if before is None and after is not None:
@@ -150,7 +146,9 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
             if not after_channel_id:
                 return
 
-            after_channel = await event.app.rest.fetch_channel(after_channel_id)
+            after_channel = plugin.client.cache.get_guild_channel(after_channel_id)
+
+            channel_mention = getattr(after_channel, "mention", "Unknown")
 
             embed = hikari.Embed(
                 title="Join to voice channel",
@@ -158,7 +156,7 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
                 timestamp=pendulum.now("Europe/Warsaw")
                 )
             embed.set_author(name=member.display_name, icon=member.avatar_url)
-            embed.add_field(name="Channel", value=after_channel.mention)
+            embed.add_field(name="Channel", value=channel_mention)
             embed.add_field(name="User", value=member.mention)
             await log_channel.send(embed=embed)
 
@@ -167,7 +165,9 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
             if not before_channel_id:
                 return
 
-            before_channel = await event.app.rest.fetch_channel(before_channel_id)
+            before_channel = plugin.client.cache.get_guild_channel(before_channel_id)
+
+            channel_mention = getattr(before_channel, "mention", "Unknown")
 
             embed = hikari.Embed(
                 title="Left from voice channel",
@@ -175,7 +175,7 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
                 timestamp=pendulum.now("Europe/Warsaw")
                 )
             embed.set_author(name=member.display_name, icon=member.avatar_url)
-            embed.add_field(name="Channel", value=before_channel.mention)
+            embed.add_field(name="Channel", value=channel_mention)
             embed.add_field(name="User", value=member.mention)
             await log_channel.send(embed=embed)
 
@@ -186,8 +186,8 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
             if not before_channel_id or not after_channel_id:
                 return
 
-            before_channel = await event.app.rest.fetch_channel(before_channel_id)
-            after_channel = await event.app.rest.fetch_channel(after_channel_id)
+            before_channel = plugin.client.cache.get_guild_channel(before_channel_id)
+            after_channel = plugin.client.cache.get_guild_channel(after_channel_id)
 
             embed = hikari.Embed(
                 title="Moving between voice channels",
@@ -195,20 +195,25 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
                 timestamp=pendulum.now("Europe/Warsaw")
                 )
             embed.set_author(name=member.display_name, icon=member.avatar_url)
-            embed.add_field(name="Start", value=before_channel.mention)
-            embed.add_field(name="End", value=after_channel.mention)
+            embed.add_field(
+                name="Start",
+                value=before_channel.mention if before_channel else "Unknown"
+                )
+            embed.add_field(
+                name="End",
+                value=after_channel.mention if after_channel else "Unknown"
+                )
             embed.add_field(name="User", value=member.mention)
             await log_channel.send(embed=embed)
 
 # <--------------------------------------------------### Channel Events
-@loader.listener(hikari.GuildChannelCreateEvent)
+@plugin.listen(hikari.GuildChannelCreateEvent)
 async def on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
-    LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
-    log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
+    log_channel = get_log_channel()
 
     channel_name = event.channel.name
     if channel_name is None:
-        channel_name = "Underfined"
+        channel_name = "Undefined"
 
     if isinstance(log_channel, hikari.GuildTextChannel):
         embed = hikari.Embed(
@@ -221,14 +226,13 @@ async def on_channel_create(event: hikari.GuildChannelCreateEvent) -> None:
 
         await log_channel.send(embed=embed)
 
-@loader.listener(hikari.GuildChannelDeleteEvent)
+@plugin.listen(hikari.GuildChannelDeleteEvent)
 async def on_channel_remove(event: hikari.GuildChannelDeleteEvent) -> None:
-    LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
-    log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
+    log_channel = get_log_channel()
 
     channel_name = event.channel.name
     if channel_name is None:
-        channel_name = "Underfined"
+        channel_name = "Undefined"
 
     if isinstance(log_channel, hikari.GuildTextChannel):
         embed = hikari.Embed(
@@ -242,14 +246,13 @@ async def on_channel_remove(event: hikari.GuildChannelDeleteEvent) -> None:
         await log_channel.send(embed=embed)
 
 # <--------------------------------------------------### Role Events
-@loader.listener(hikari.RoleCreateEvent)
+@plugin.listen(hikari.RoleCreateEvent)
 async def on_role_create(event: hikari.RoleCreateEvent) -> None:
-    LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
-    log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
+    log_channel = get_log_channel()
 
     role_name = event.role.name
     if role_name is None:
-        role_name = "Underfined"
+        role_name = "Undefined"
 
     if isinstance(log_channel, hikari.GuildTextChannel):
         embed = hikari.Embed(
@@ -262,17 +265,16 @@ async def on_role_create(event: hikari.RoleCreateEvent) -> None:
 
         await log_channel.send(embed=embed)
 
-@loader.listener(hikari.RoleDeleteEvent)
+@plugin.listen(hikari.RoleDeleteEvent)
 async def on_role_remove(event: hikari.RoleDeleteEvent) -> None:
-    LOG_CHANNEL_ID = config_manager.get_config_value("LOG_CHANNEL_ID")
-    log_channel = await event.app.rest.fetch_channel(int(LOG_CHANNEL_ID))
+    log_channel = get_log_channel()
 
     if event.old_role is None:
         return
 
     role_name = event.old_role.name
     if role_name is None:
-        role_name = "Underfined"
+        role_name = "Undefined"
 
     if isinstance(log_channel, hikari.GuildTextChannel):
         embed = hikari.Embed(
@@ -286,10 +288,17 @@ async def on_role_remove(event: hikari.RoleDeleteEvent) -> None:
         await log_channel.send(embed=embed)
 
 
-@loader.error_handler
-async def handler(exc: lightbulb.exceptions.ExecutionPipelineFailedException) -> bool:
-    for x in exc.hook_failures:
-        if isinstance(x, lightbulb.prefab.OnCooldown):
-            await exc.context.respond(f"You are on Cooldown. Wait {x} seconds", flags=hikari.MessageFlag.EPHEMERAL)
-            return True
-    return False
+def get_log_channel() -> typing.Optional[hikari.PermissibleGuildChannel]:
+    log_channel_id = config_manager.get_config_value("LOG_CHANNEL_ID")
+    if not log_channel_id:
+        return None
+    return plugin.client.cache.get_guild_channel(int(log_channel_id))
+
+
+@arc.loader
+def loader(client: arc.GatewayClient) -> None:
+    client.add_plugin(plugin)
+
+@arc.unloader
+def unloader(client: arc.GatewayClient) -> None:
+    client.remove_plugin(plugin)
