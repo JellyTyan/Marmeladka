@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div style="text-align: center;">
-  <h2>Marmeladka</h2>
+  <h2>Marmeladka Outdated</h2>
   <p align="center">
     <img src=".github/assets/marmeladka.png" alt="Senko from Sewayaki Kitsune No Senko-San">
   </p>

@@ -164,3 +164,7 @@ tests
 test
 Profile
 database/database.sql
+/alembic
+/other
+/har_and_cookies
+.DS_Store
