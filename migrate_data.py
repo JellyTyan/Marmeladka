@@ -19,16 +19,17 @@ async def create_tables(pg_conn):
     CREATE TABLE IF NOT EXISTS user_data (
         user_id BIGINT PRIMARY KEY,
         username VARCHAR(30),
-        lang VARCHAR(5) DEFAULT 'en-EN',
+        lang VARCHAR(7) DEFAULT 'en-EN',
         message_count INTEGER NOT NULL DEFAULT 0,
         invite_count INTEGER NOT NULL DEFAULT 0,
         voice_time INTEGER NOT NULL DEFAULT 0,
         bump_count INTEGER NOT NULL DEFAULT 0,
-        tag TEXT,
+        tag VARCHAR(32),
         biography TEXT,
         birthday_date DATE
     );
     """
+
     create_nuclear_data = """
     CREATE TABLE IF NOT EXISTS nuclear_data (
         user_id BIGINT PRIMARY KEY,
@@ -41,20 +42,55 @@ async def create_tables(pg_conn):
         mivina_cd DATE
     );
     """
+
     create_nuclear_logs = """
     CREATE TABLE IF NOT EXISTS nuclear_logs (
-        id BIGINT PRIMARY KEY,
+        id BIGSERIAL PRIMARY KEY,
         user_id BIGINT NOT NULL,
-        username VARCHAR(20),
-        date DATE,
+        username VARCHAR(32),
+        date DATE NOT NULL DEFAULT CURRENT_DATE,
         used BOOLEAN NOT NULL DEFAULT FALSE,
         log_type VARCHAR(10) NOT NULL
     );
     """
+
+    create_guild_config = """
+    CREATE TABLE IF NOT EXISTS guild_config (
+        guild_id BIGINT PRIMARY KEY,
+        guild_name VARCHAR(32),
+        lang VARCHAR(5) DEFAULT 'en-EN',
+        welcome_channel_id BIGINT,
+        welcome_message TEXT,
+        welcome_role_id BIGINT,
+        private_category_id BIGINT,
+        private_voice_id BIGINT
+    );
+    """
+
+    create_embed_config = """
+    CREATE TABLE IF NOT EXISTS embed_config (
+        id SERIAL PRIMARY KEY,
+        guild_id BIGINT NOT NULL,
+        embed_key VARCHAR,
+        title VARCHAR(256),
+        description VARCHAR(4096),
+        footer_text VARCHAR(2048),
+        author_name VARCHAR(256),
+        image_url VARCHAR(256),
+        thumbnail_url VARCHAR(256),
+        footer_icon_url VARCHAR(256),
+        color VARCHAR(256),
+        url VARCHAR(256),
+        CONSTRAINT uix_guild_embed_key UNIQUE (guild_id, embed_key)
+    );
+    """
+
     await pg_conn.execute(create_user_data)
     await pg_conn.execute(create_nuclear_data)
     await pg_conn.execute(create_nuclear_logs)
-    print("Таблицы созданы.")
+    await pg_conn.execute(create_guild_config)
+    await pg_conn.execute(create_embed_config)
+    print("Все таблицы успешно созданы.")
 
 async def migrate_user_data(sqlite_conn, pg_conn):
     query = """
