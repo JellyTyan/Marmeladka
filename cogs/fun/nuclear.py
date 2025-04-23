@@ -384,13 +384,12 @@ async def mivina_error_handler(
     invocation_contexts=[hikari.ApplicationContextType.GUILD],
     )
 async def nuclear_case(ctx: arc.GatewayContext, cx: miru.Client = arc.inject()) -> None:
-    await ctx.defer(flags=hikari.MessageFlag.EPHEMERAL)
     check_new_user = await nuclear_func.get_new_user(ctx.user.id)
     if check_new_user is True:
         user_language = await UserProfileFunc().get_lang(ctx.user.id)
         with open (f"localization/{user_language}.json", "r") as f:
             language_json = json.load(f)
-        await ctx.edit_initial_response(language_json["nuclear_case"]["new_user"])
+        await ctx.respond(language_json["nuclear_case"]["new_user"], flags=hikari.MessageFlag.EPHEMERAL)
         return
     else:
         modal = NuclearCase()
@@ -410,7 +409,7 @@ async def case_error_handler(
             f"\nTry again in `{error.retry_after}` seconds."
         )
     else:
-        raise error
+        await ctx.respond("❌ Something went wrong. Please contact the bot developer.", flags=hikari.MessageFlag.EPHEMERAL)
 
 
 @arc.loader

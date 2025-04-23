@@ -19,7 +19,7 @@ def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
 
-class NuclearCase(miru.Modal, title="Enter the code phrase, and the arsenal will appear in the case"):
+class NuclearCase(miru.Modal, title="Enter the code phrase, and magic will happen"):
     codeword = miru.TextInput(
         label="What should be written here?",
         style=hikari.TextInputStyle.SHORT,
