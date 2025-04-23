@@ -1,6 +1,6 @@
 import datetime
-
-from sqlalchemy import BigInteger, Boolean, Date, Integer, Sequence, String, UniqueConstraint, func
+from datetime import date
+from sqlalchemy import BigInteger, Boolean, Date, Integer, Sequence, String, UniqueConstraint, func, Text
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -13,26 +13,26 @@ class UserData(Base):
 
     user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     username: Mapped[str] = mapped_column(String(30), nullable=True)
-    lang: Mapped[str] = mapped_column(String(5), default="en-EN")
+    lang: Mapped[str] = mapped_column(String(7), default="en-EN")
     message_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     invite_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     voice_time: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     bump_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    tag: Mapped[str] = mapped_column(String, nullable=True)
-    biography: Mapped[str] = mapped_column(String, nullable=True)
-    birthday_date: Mapped[str] = mapped_column(Date, nullable=True)
+    tag: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    biography: Mapped[str | None] = mapped_column(Text, nullable=True)
+    birthday_date: Mapped[date | None] = mapped_column(Date, nullable=True)
 
 class NuclearData(Base):
     __tablename__ = "nuclear_data"
 
     user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    username: Mapped[str] = mapped_column(String(30), nullable=True)
+    username: Mapped[str | None] = mapped_column(String(30), nullable=True)
     new_user: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     nuclear_mode: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     bomb_start_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     mivina_start_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    bomb_cd: Mapped[str] = mapped_column(Date, nullable=True, default="")
-    mivina_cd: Mapped[str] = mapped_column(Date, nullable=True, default="")
+    bomb_cd: Mapped[date | None] = mapped_column(Date, nullable=True)
+    mivina_cd: Mapped[date | None] = mapped_column(Date, nullable=True)
 
 class NuclearLogs(Base):
     __tablename__ = "nuclear_logs"
@@ -63,7 +63,7 @@ class EmbedConfig(Base):
     guild_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     embed_key: Mapped[str] = mapped_column(String, nullable=True)
     title: Mapped[str] = mapped_column(String(256), nullable=True)
-    descrition: Mapped[str] = mapped_column(String(4096), nullable=True)
+    description: Mapped[str] = mapped_column(String(4096), nullable=True)
     footer_text: Mapped[str] = mapped_column(String(2048), nullable=True)
     author_name: Mapped[str] = mapped_column(String(256), nullable=True)
     image_url: Mapped[str] = mapped_column(String(256), nullable=True)

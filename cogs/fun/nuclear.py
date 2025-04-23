@@ -55,7 +55,6 @@ async def on_member_remove(event: hikari.MemberDeleteEvent):
     invocation_contexts=[hikari.ApplicationContextType.GUILD]
     )
 async def suicide_command(ctx: arc.GatewayContext) -> None:
-    await ctx.defer(flags=hikari.MessageFlag.EPHEMERAL)
     try:
         guild = ctx.get_guild()
         if guild is None:
@@ -83,7 +82,6 @@ async def suicide_command(ctx: arc.GatewayContext) -> None:
     invocation_contexts=[hikari.ApplicationContextType.GUILD],
     )
 async def arsenal_command(ctx: arc.GatewayContext, cx: miru.Client = arc.inject()) -> None:
-    await ctx.defer(flags=hikari.MessageFlag.EPHEMERAL)
     user = ctx.user
 
     # Если пользователь новый, то отправляем вспомонательный эмбед
@@ -156,7 +154,6 @@ async def startbomb_command(
     target_user: arc.Option[hikari.User, arc.UserParams("Launch at who?", name="user")],
     nuclear_name: arc.Option[str | None, arc.StrParams("What is the name of the nuclear bomb?", name="name")] = None
     ) -> None:
-    await ctx.defer(flags=hikari.MessageFlag.EPHEMERAL)
     nuclear_name = f'"{nuclear_name}" ' if nuclear_name else " "
 
     guild = ctx.get_guild()
@@ -301,7 +298,6 @@ async def startbomb_error_handler(
     invocation_contexts=[hikari.ApplicationContextType.BOT_DM],
     )
 async def mivina_command(ctx: arc.GatewayContext) -> None:
-    await ctx.defer(flags=hikari.MessageFlag.EPHEMERAL)
     guild_id = config_manager.get_config_value("GUILD_ID")
     if not guild_id:
         return
@@ -394,7 +390,7 @@ async def nuclear_case(ctx: arc.GatewayContext, cx: miru.Client = arc.inject()) 
         user_language = await UserProfileFunc().get_lang(ctx.user.id)
         with open (f"localization/{user_language}.json", "r") as f:
             language_json = json.load(f)
-        await ctx.respond(language_json["nuclear_case"]["new_user"], flags=hikari.MessageFlag.EPHEMERAL)
+        await ctx.edit_initial_response(language_json["nuclear_case"]["new_user"])
         return
     else:
         modal = NuclearCase()
