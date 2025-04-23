@@ -94,7 +94,7 @@ async def create_tables(pg_conn):
 
 async def migrate_user_data(sqlite_conn, pg_conn):
     query = """
-        SELECT user_id, username, message_count, invite_count, voice_time, bump_count, tag, biography, birthday_date
+        SELECT id, username, message_count, invite_count, voice_time, bump_count, tag, biography, birthday_date
         FROM user_data
     """
     async with sqlite_conn.execute(query) as cursor:
@@ -141,27 +141,34 @@ async def migrate_nuclear_data(sqlite_conn, pg_conn):
                 print(f"Ошибка вставки для nuclear_data user_id={user_id}: {e}")
 
 async def migrate_nuclear_logs(sqlite_conn, pg_conn):
-    query = """
-        SELECT id, user_id, username, date, used, log_type
-        FROM nuclear_logs
-    """
-    async with sqlite_conn.execute(query) as cursor:
-        rows = await cursor.fetchall()
-        for row in rows:
-            log_id, user_id, username, date_str, used, log_type = row
-            log_date = parse_date(date_str)
-            used_bool = bool(used) if used is not None else None
-            try:
-                await pg_conn.execute(
-                    """
-                    INSERT INTO nuclear_logs
-                    (id, user_id, username, date, used, log_type)
-                    VALUES ($1, $2, $3, $4, $5, $6)
-                    """,
-                    log_id, user_id, username, log_date, used_bool, log_type
-                )
-            except Exception as e:
-                print(f"Ошибка вставки для nuclear_logs id={log_id}: {e}")
+    async def fetch_and_insert_logs(table_name: str, log_type_value: str):
+        query = f"""
+            SELECT id, user_id, username, date, used
+            FROM {table_name}
+        """
+        async with sqlite_conn.execute(query) as cursor:
+            rows = await cursor.fetchall()
+            for row in rows:
+                log_id, user_id, username, date_str, used = row
+                log_date = parse_date(date_str)
+                used_bool = bool(used) if used is not None else False
+                try:
+                    await pg_conn.execute(
+                        """
+                        INSERT INTO nuclear_logs
+                        (id, user_id, username, date, used, log_type)
+                        VALUES ($1, $2, $3, $4, $5, $6)
+                        """,
+                        log_id, user_id, username, log_date, used_bool, log_type_value
+                    )
+                except Exception as e:
+                    print(f"Ошибка вставки для {table_name} id={log_id}: {e}")
+
+    print("Миграция bomb_logs...")
+    await fetch_and_insert_logs("bomb_logs", "bomb")
+
+    print("Миграция mivina_logs...")
+    await fetch_and_insert_logs("mivina_logs", "mivina")
 
 async def main():
     sqlite_conn = await aiosqlite.connect(SQLITE_DB)
