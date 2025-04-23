@@ -1,6 +1,7 @@
 import logging
 
 from sqlalchemy.ext.asyncio import create_async_engine
+
 from .models import Base
 
 logging.basicConfig(level=logging.INFO)

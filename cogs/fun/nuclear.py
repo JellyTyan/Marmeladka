@@ -11,7 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from config.config_manager import ConfigManager
-from database.database_manager import DatabaseManager
+from database.init import db
 from database.models import NuclearData
 from functions.nuclear_func import NuclearFunc
 from functions.user_profile_func import UserProfileFunc
@@ -25,14 +25,13 @@ plugin = arc.GatewayPlugin("Nuclear")
 
 logger = logging.getLogger(__name__)
 
-database_manager = DatabaseManager()
 config_manager = ConfigManager()
 nuclear_func = NuclearFunc()
 
 
 @plugin.listen(hikari.MemberCreateEvent)
 async def on_member_join(event: hikari.MemberCreateEvent) -> None:
-    session = async_sessionmaker(database_manager.engine, expire_on_commit=True)
+    session = async_sessionmaker(db.engine, expire_on_commit=True)
     async with session() as session:
         user = NuclearData(
             user_id=event.user.id,
@@ -43,7 +42,7 @@ async def on_member_join(event: hikari.MemberCreateEvent) -> None:
 
 @plugin.listen(hikari.MemberDeleteEvent)
 async def on_member_remove(event: hikari.MemberDeleteEvent):
-    session = async_sessionmaker(database_manager.engine, expire_on_commit=True)
+    session = async_sessionmaker(db.engine, expire_on_commit=True)
     async with session() as session:
         user = select(NuclearData).where(NuclearData.user_id == event.user_id)
         await session.delete(user)
@@ -282,6 +281,18 @@ async def startbomb_command(
     except Exception as e:
         logger.error(e)
 
+@startbomb_command.set_error_handler
+async def startbomb_error_handler(
+    ctx: arc.GatewayContext, error: Exception
+) -> None:
+    if isinstance(error, arc.UnderCooldownError):
+        await ctx.respond(
+            "Command is on cooldown!"
+            f"\nTry again in `{error.retry_after}` seconds."
+        )
+    else:
+        raise error
+
 
 @plugin.include
 @arc.with_hook(arc.channel_limiter(5.0, 1))
@@ -357,6 +368,18 @@ async def mivina_command(ctx: arc.GatewayContext) -> None:
         await ctx.respond(language_json["mivina"]["error"])
         logger.error(e)
 
+@mivina_command.set_error_handler
+async def mivina_error_handler(
+    ctx: arc.GatewayContext, error: Exception
+) -> None:
+    if isinstance(error, arc.UnderCooldownError):
+        await ctx.respond(
+            "Command is on cooldown!"
+            f"\nTry again in `{error.retry_after}` seconds."
+        )
+    else:
+        raise error
+
 
 @plugin.include
 @arc.with_hook(arc.channel_limiter(5.0, 1))
@@ -380,6 +403,18 @@ async def nuclear_case(ctx: arc.GatewayContext, cx: miru.Client = arc.inject()) 
         await builder.create_modal_response(ctx.interaction)
 
         cx.start_modal(modal)
+
+@nuclear_case.set_error_handler
+async def case_error_handler(
+    ctx: arc.GatewayContext, error: Exception
+) -> None:
+    if isinstance(error, arc.UnderCooldownError):
+        await ctx.respond(
+            "Command is on cooldown!"
+            f"\nTry again in `{error.retry_after}` seconds."
+        )
+    else:
+        raise error
 
 
 @arc.loader

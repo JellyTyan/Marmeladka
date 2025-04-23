@@ -1,9 +1,8 @@
 import datetime
 
-from sqlalchemy import BigInteger, Boolean, Date, Integer, Sequence, String, func
+from sqlalchemy import BigInteger, Boolean, Date, Integer, Sequence, String, UniqueConstraint, func
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import UniqueConstraint
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -54,6 +53,8 @@ class GuildConfig(Base):
     welcome_channel_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     welcome_message: Mapped[str] = mapped_column(String, nullable=True)
     welcome_role_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
+    private_category_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
+    private_voice_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
 
 class EmbedConfig(Base):
     __tablename__ = "embed_config"
