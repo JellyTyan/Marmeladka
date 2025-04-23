@@ -69,10 +69,11 @@ async def suicide_command(ctx: arc.GatewayContext) -> None:
         )
         await ctx.respond(embed=embed)
     except Exception:
-        with open ("localization/ru-Ru.json", "r") as f:
-            data = json.load(f)
+        user_language = await UserProfileFunc().get_lang(ctx.user.id)
+        with open (f"localization/{user_language}.json", "r") as f:
+            language_json = json.load(f)
 
-        await ctx.respond(data.get("suicide").get("fail"))
+        await ctx.respond(language_json.get("suicide").get("fail"))
 
 
 @plugin.include
