@@ -1,6 +1,7 @@
+import difflib
 import json
+import os
 from datetime import datetime, timedelta, timezone
-from difflib import SequenceMatcher
 
 import hikari
 import miru
@@ -13,10 +14,6 @@ from utils.get_random_gif import get_random_gif
 nuclear_func = NuclearFunc()
 
 cooldowns = {}
-
-
-def similar(a, b):
-    return SequenceMatcher(None, a, b).ratio()
 
 
 class NuclearCase(miru.Modal, title="Enter the code phrase, and magic will happen"):
@@ -39,15 +36,8 @@ class NuclearCase(miru.Modal, title="Enter the code phrase, and magic will happe
         with open (f"localization/{user_language}.json", "r") as f:
             language_json = json.load(f)
 
-        # Ключевая фраза
-        target_phrase_bomb = language_json["nuclear_ui"]["nuclear_code_phrase"]
-        target_phrase_mivina = language_json["nuclear_ui"]["mivina_code_phrase"]
-
-        # Порог схожести, при котором считаем, что фразы идентичны
-        similarity_threshold = 0.8
-
         # Сравниваем сообщение с ключевой фразой
-        if similar(codeword.lower(), target_phrase_bomb.lower()) > similarity_threshold:
+        if await is_valid_codeword(codeword, "nuclear_code_phrase"):
             nuclear_mode = await nuclear_func.get_nuclear_mode(user_id)
             if nuclear_mode == 0:
                 embedDecline = create_embed(description=language_json["nuclear_ui"]["nuclear_mode_off"])
@@ -75,7 +65,7 @@ class NuclearCase(miru.Modal, title="Enter the code phrase, and magic will happe
                 return
 
         # Пользователь хочет получить мивину
-        elif (similar(codeword.lower(), target_phrase_mivina.lower()) > similarity_threshold):
+        elif await is_valid_codeword(codeword, "mivina_code_phrase"):
             nuclear_mode = await nuclear_func.get_nuclear_mode(user_id)
             if nuclear_mode == 0:
                 embedDecline = create_embed(description=language_json["nuclear_ui"]["nuclear_mode_off"])
@@ -220,3 +210,33 @@ class SelfBombActivate(miru.Button):
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.NONE)
             return
         self.view.stop()
+
+
+
+similarity_threshold = 0.8
+
+async def is_valid_codeword(input_phrase: str, key: str) -> bool:
+    """
+    Проверяет, совпадает ли введённая фраза с одной из локализованных кодовых фраз (difflib).
+
+    :param input_phrase: Фраза от пользователя
+    :param key: Ключ фразы из JSON (например: "nuclear_code_phrase" или "mivina_code_phrase")
+    :return: True, если совпадает хотя бы одна фраза
+    """
+    input_phrase = input_phrase.strip().lower()
+
+    for lang_file in os.listdir("localization"):
+        if not lang_file.endswith(".json"):
+            continue
+        try:
+            with open(f"localization/{lang_file}", "r", encoding="utf-8") as f:
+                data = json.load(f)
+                target_phrase = data["nuclear_ui"].get(key, "").strip().lower()
+                if not target_phrase:
+                    continue
+                similarity = difflib.SequenceMatcher(None, input_phrase, target_phrase).ratio()
+                if similarity >= similarity_threshold:
+                    return True
+        except Exception as e:
+            print(f"[WARN] Ошибка чтения {lang_file}: {e}")
+    return False
