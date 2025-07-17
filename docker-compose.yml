@@ -29,10 +29,8 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       - pgnet
-      -
 networks:
   pgnet:
 
 volumes:
   db_data:
-  telegram-bot-api-data:
