@@ -164,9 +164,7 @@ tests
 test
 Profile
 database/database.sql
-migrations
 .DS_Store
-alembic
 other/logs
 har_and_cookies
 /generated_media
