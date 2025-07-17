@@ -1,6 +1,5 @@
 hikari-arc==2.1.1
 hikari-miru==4.2.0
-hikari[voice]==2.2.1
 python-dotenv==1.1.0
 PyYAML==6.0.2
 aiohttp==3.11.18
