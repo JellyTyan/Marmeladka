@@ -16,11 +16,12 @@ class DatabaseManager:
             cls._instance._initialized = False
         return cls._instance
 
-    def __init__(self, db_url: str = "postgresql+asyncpg://marmeladka_user:marmeladkabot@localhost/marmeladka_db", echo: bool = False):
+    def __init__(self, echo: bool = False):
         if self._initialized:
             return
 
-        self.db_url = db_url
+        self.db_url = os.getenv("DATABASE_URL", "postgresql+asyncpg://marmeladka_user:marmeladkabot@localhost/marmeladka_db")
+        
         self.echo = echo
         self.engine = create_async_engine(self.db_url, echo=self.echo)
         logger.info("Подключение к базе данных успешно")
