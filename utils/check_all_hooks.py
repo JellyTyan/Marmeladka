@@ -9,7 +9,7 @@ from ui.welcomeUI import MainView
 from utils.create_embed import create_embed
 
 
-async def check_info_view(arc_client: arc.GatewayClient, cx: miru.Client):
+async def check_info_view(arc_client: arc.GatewayClient, cx: miru.Client) -> None:
     with open('config/hooks.json', 'r') as file:
         data = json.load(file)
 
@@ -53,7 +53,7 @@ async def check_info_view(arc_client: arc.GatewayClient, cx: miru.Client):
         cx.start_view(view, bind_to=message)
 
 
-async def check_ticket_view(arc_client: arc.GatewayClient, cx: miru.Client):
+async def check_ticket_view(arc_client: arc.GatewayClient, cx: miru.Client) -> None:
     with open('config/hooks.json', 'r') as file:
         data = json.load(file)
 

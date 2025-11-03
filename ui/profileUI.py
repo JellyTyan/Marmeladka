@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import date
 
 import hikari
 import miru
@@ -24,6 +25,7 @@ class EditProfileButton(miru.Button):
 
 class EditProfile(miru.Modal, title="Edit profile"):
     def __init__(self) -> None:
+        super().__init__(custom_id="edit_profile_modal")
         self.db_manager = DatabaseManager()
         self.session = async_sessionmaker(self.db_manager.engine, expire_on_commit=True)
     tag = miru.TextInput(
@@ -74,7 +76,13 @@ class EditProfile(miru.Modal, title="Edit profile"):
 
                 user.tag = tag or user.tag
                 user.biography = bio or user.biography
-                user.birthday_date = birth or user.birthday_date
+                
+                if birth:
+                    try:
+                        month, day = map(int, birth.split('-'))
+                        user.birthday_date = date(2000, month, day)  # Use 2000 as default year
+                    except (ValueError, TypeError):
+                        pass  # Keep existing value if conversion fails
 
                 await session.commit()
 

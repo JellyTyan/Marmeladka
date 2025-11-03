@@ -12,6 +12,7 @@ from utils.check_all_hooks import check_info_view, check_ticket_view
 from utils.localization_provider import COMMAND_LOCALES, OPTION_LOCALES
 
 config = ConfigManager()
+db = DatabaseManager()
 
 bot = hikari.GatewayBot(
     intents=hikari.Intents.ALL,
@@ -22,6 +23,9 @@ arc_client = arc.GatewayClient(
     bot,
     provided_locales=[hikari.Locale.EN_US, hikari.Locale.RU, hikari.Locale.UK]
     )
+
+arc_client.set_type_dependency(ConfigManager, config)
+arc_client.set_type_dependency(DatabaseManager, db)
 
 log_dir = "other/logs"
 os.makedirs(log_dir, exist_ok=True)
@@ -57,11 +61,17 @@ miru_client = miru.Client.from_arc(arc_client)
 
 @arc_client.listen()
 async def on_started(_: hikari.StartedEvent) -> None:
-    db = DatabaseManager()
-    await db.init_db()
+    try:
+        await db.init_db()
+        logger.info("Database initialized successfully")
 
-    await check_info_view(arc_client, miru_client)
-    await check_ticket_view(arc_client, miru_client)
+        await check_info_view(arc_client, miru_client)
+        logger.info("Info view checked successfully")
+
+        await check_ticket_view(arc_client, miru_client)
+        logger.info("Ticket view checked successfully")
+    except Exception as e:
+        logger.error(f"Error in on_started: {e}", exc_info=True)
 
 if __name__ == '__main__':
     arc_client.load_extensions_from("cogs")
