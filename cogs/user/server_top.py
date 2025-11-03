@@ -79,7 +79,7 @@ async def topmessages_command(ctx: arc.GatewayContext) -> None:
             user_ping = member.mention
         else:
             user_ping = f"<@{user.user_id}>"
-        title += f"{index}. `{user.message_count} сообщений` - {user_ping}\n"
+        title += f"{index}. `{user.message_count} messages` - {user_ping}\n"
     embed = hikari.Embed(description=title, color=0x2b2d31)
 
     await ctx.respond(embed=embed)
@@ -135,7 +135,7 @@ async def on_message(event: hikari.GuildMessageCreateEvent) -> None:
         if event.author.is_bot:
             embed = event.embeds[0]
 
-            if embed.description and "Время реакции" in embed.description:
+            if embed.description and "Reaction time" in embed.description:
                 if embed.author is None:
                     return
                 user_name = embed.author.name

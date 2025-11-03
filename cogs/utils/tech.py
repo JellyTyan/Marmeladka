@@ -33,11 +33,14 @@ async def help_command(ctx: arc.GatewayContext, cs: miru.Client = arc.inject()) 
 
     help_data = language_json["help_command"]
 
+    guild_created = guild.created_at.strftime("%d-%m-%Y")
+    guild_members_count = len(guild.get_members())
+    
     first_descr = help_data["first_description"].format(
         guild_owner=guild_owner,
-        guild=guild,
-        len=len,
-        legends=legends
+        guild_created=guild_created,
+        guild_members_count=guild_members_count,
+        legends=legends if legends else [{"mention": "No legends"}]
     )
     embed_1 = create_embed(
         title=help_data["title"],

@@ -61,7 +61,7 @@
     },
     "help_command": {
         "title": "My commands:",
-        "first_description": "You are on a simple and cozy Zheleshka server! \n\nUnique (almost) bots and features.\n **Let’s start the nuclear war!**\nServer owner: {guild_owner.mention}\nServer creation date: `{guild.created_at.strftime(\"%d-%m-%Y\")}`\nTotal members: `{len(guild.get_members())}`\nCurrent legend: {legends[0].mention}",
+        "first_description": "You are on a simple and cozy Zheleshka server! \n\nUnique (almost) bots and features.\n **Let’s start the nuclear war!**\nServer owner: {guild_owner.mention}\nServer creation date: `{guild_created}`\nTotal members: `{guild_members_count}`\nCurrent legend: {legends[0].mention}",
         "second_description": "`/bio` - information about the sweets.\n`/profile` - user profile.\n`/top` - leaderboards in various categories.\n`/cute` - cute pictures of animals.\n`/emotion` - hugs, kisses, etc.\n`/nuke`, `/arsenal` - control the Nuke system.\n`/suicide` - Press F.\n`/random-number` - random number."
     },
     "random_number_command": {

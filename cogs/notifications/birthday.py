@@ -43,16 +43,16 @@ async def birth_check():
             birthday_channel_id = config.get_config_value("BIRTHDAY_CHANNEL_ID")
             channel_id_int = int(birthday_channel_id)
         except Exception as e:
-            logger.error(f"Ошибка получения ID канала: {e}")
+            logger.error(f"Error getting channel ID: {e}")
             return
 
         for user_id in user_ids:
             try:
-                message = f"У <@{user_id}> сегодня день рождения! Поздравляем! https://cdn.discordapp.com/attachments/1108629194788847637/1265283297827881012/Happy_Birthday.mp4?ex=66a0f266&is=669fa0e6&hm=0b568445807e5efce7ff5e22b77fb58951f973c3dcff443012e89f7be3d0cac5&"
+                message = f"<@{user_id}> has a birthday!! Congratulations!!!! https://cdn.discordapp.com/attachments/1108629194788847637/1265283297827881012/Happy_Birthday.mp4?ex=66a0f266&is=669fa0e6&hm=0b568445807e5efce7ff5e22b77fb58951f973c3dcff443012e89f7be3d0cac5&"
                 await plugin.client.rest.create_message(channel_id_int, message, user_mentions=True)
                 logger.info(f"Birthday message sent for user {user_id}")
             except Exception as e:
-                logger.error(f"Не удалось отправить сообщение для user_id {user_id}: {e}")
+                logger.error(f"Failed to send message for user_id {user_id}: {e}")
                 continue
 
     except Exception as e:

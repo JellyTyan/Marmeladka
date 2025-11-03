@@ -25,16 +25,16 @@ class DatabaseManager:
         
         self.echo = echo
         self.engine = create_async_engine(self.db_url, echo=self.echo)
-        logger.info("Подключение к базе данных успешно")
+        logger.info("Database connection successful")
         self._initialized = True
 
     async def init_db(self):
         """Creates tables if they do not exist"""
         async with self.engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-        logger.info("База данных инициализирована")
+        logger.info("Database initialized")
 
     async def close(self):
         """Closes the database connection"""
         await self.engine.dispose()
-        logger.info("Подключение к базе данных закрыто")
+        logger.info("Database connection closed")
