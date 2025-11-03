@@ -1,7 +1,6 @@
-import random
-
 import arc
 import hikari
+import random
 
 import yaml
 from functions.anime_func import get_nekos_gif, get_waifu_gif

@@ -1,4 +1,5 @@
 import asyncio
+import json
 import random
 
 import arc
@@ -7,6 +8,8 @@ import miru
 from miru.ext import nav
 
 from config.config_manager import ConfigManager
+from functions.user_profile_func import UserProfileFunc
+from utils.create_embed import create_embed
 
 plugin = arc.GatewayPlugin("Tech", invocation_contexts=[hikari.ApplicationContextType.GUILD])
 
@@ -19,42 +22,41 @@ async def help_command(ctx: arc.GatewayContext, cs: miru.Client = arc.inject()) 
     if guild is None:
         return
 
+    user_language = await UserProfileFunc().get_lang(ctx.user.id)
+    with open(f"localization/{user_language}.json", "r") as f:
+        language_json = json.load(f)
+
     legend_role_id = config_manager.get_config_value("LEGEND_ROLE_ID")
     members = await ctx.client.rest.fetch_members(guild.id)
-
     legends = [member for member in members if int(legend_role_id) in member.role_ids]
-
     guild_owner = await guild.fetch_owner()
 
-    first_descr = f"""
-    Ты находишься на простом и ламповом сервере Желешки! \n\nУникальные(почти) боты, функции.\n **Давайте начнём ядерную войну!**
-    Владелец сервера: {guild_owner.mention}\n
-    Дата создания сервера: `{guild.created_at.strftime("%d-%m-%Y")}`\n
-    Всего участников: `{len(guild.get_members())}`\n
-    Текущая легенда: {legends[0].mention}
-    """
-    embed_1 = hikari.Embed(title=guild.name, description=first_descr, color=0x2B2D31)
-    embed_1.set_thumbnail(guild.icon_url)
+    help_data = language_json["help_command"]
 
-    second_descr = """
-    `/био` - информация о сладостях.\n
-    `/профиль` - профиль пользователя.\n
-    `/топ` - таблицы лидеров по разным направлениям.\n
-    `/мило` - миленькие картиночки животных.\n
-    `/эмоция` - обнимашки, целовашки и т.п.\n
-    `/ядерка`, `/арсенал` - управление системой Ядерка.\n
-    `/суицид` - Press F.\n
-    `/рандом-число` - случайное число.\n
-    """
-    embed_2 = hikari.Embed(title="Мои команды:", description=second_descr, color=0x2B2D31)
+    first_descr = help_data["first_description"].format(
+        guild_owner=guild_owner,
+        guild=guild,
+        len=len,
+        legends=legends
+    )
+    embed_1 = create_embed(
+        title=help_data["title"],
+        description=first_descr,
+        color=0x2B2D31
+    )
+
+    embed_1.set_thumbnail(guild.make_icon_url(file_format="PNG"))
+
+    embed_2 = create_embed(
+        title=help_data["title"],
+        description=help_data["second_description"],
+        color=0x2B2D31
+    )
 
     embeds = [embed_1, embed_2]
-
     navigator = nav.NavigatorView(pages=embeds)
-
     builder = await navigator.build_response_async(cs, ephemeral=True)
     await builder.create_initial_response(ctx.interaction)
-
     cs.start_view(navigator)
 
 
@@ -65,8 +67,13 @@ async def random_number(
     first_number: arc.Option[int, arc.IntParams("A number")],
     second_number: arc.Option[int, arc.IntParams("A number")]
     ) -> None:
+    user_language = await UserProfileFunc().get_lang(ctx.user.id)
+    with open(f"localization/{user_language}.json", "r") as f:
+        language_json = json.load(f)
+
     random_num = random.randint(first_number, second_number)
-    embed = hikari.Embed(description=f"Случайное число число: {random_num}")
+    response = language_json["random_number_command"]["response"].format(random_num=random_num)
+    embed = create_embed(description=response)
     await ctx.respond(embed=embed)
 
 
@@ -93,7 +100,12 @@ async def clear_messages(
                 await asyncio.sleep(0.3)
             except Exception:
                 continue
-    await ctx.respond(f"Cleared {amount} messages.")
+    user_language = await UserProfileFunc().get_lang(ctx.user.id)
+    with open(f"localization/{user_language}.json", "r") as f:
+        language_json = json.load(f)
+
+    response = language_json["clear_command"]["response"].format(amount=amount)
+    await ctx.respond(response)
 
 @arc.loader
 def loader(client: arc.GatewayClient) -> None:
