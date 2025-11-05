@@ -8,8 +8,6 @@ from config.config_manager import ConfigManager
 
 plugin = arc.GatewayPlugin("Logger")
 
-config_manager = ConfigManager()
-
 # <--------------------------------------------------### Message Events
 
 @plugin.listen(hikari.GuildMessageDeleteEvent)
@@ -95,6 +93,7 @@ async def on_member_join(event: hikari.MemberCreateEvent) -> None:
                 timestamp=pendulum.now("Europe/Warsaw")
                 )
 
+            embed.set_author(name=member.display_name, icon=member.make_avatar_url())
             embed.add_field(name="User", value=member.mention)
             embed.add_field(name="Username", value=f"{member.display_name}:{member.nickname}")
 
@@ -119,6 +118,7 @@ async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
             timestamp=pendulum.now("Europe/Warsaw")
             )
 
+        embed.set_author(name=member.display_name, icon=member.make_avatar_url())
         embed.add_field(name="User", value=member.mention)
         embed.add_field(name="Username", value=f"{member.display_name}:{member.nickname}")
 
@@ -155,7 +155,7 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
                 color=0x00FF00,
                 timestamp=pendulum.now("Europe/Warsaw")
                 )
-            embed.set_author(name=member.display_name, icon=member.avatar_url)
+            embed.set_author(name=member.display_name, icon=member.make_avatar_url())
             embed.add_field(name="Channel", value=channel_mention)
             embed.add_field(name="User", value=member.mention)
             await log_channel.send(embed=embed)
@@ -174,7 +174,7 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
                 color=0x00FF00,
                 timestamp=pendulum.now("Europe/Warsaw")
                 )
-            embed.set_author(name=member.display_name, icon=member.avatar_url)
+            embed.set_author(name=member.display_name, icon=member.make_avatar_url())
             embed.add_field(name="Channel", value=channel_mention)
             embed.add_field(name="User", value=member.mention)
             await log_channel.send(embed=embed)
@@ -194,7 +194,7 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
                 color=0x00FF00,
                 timestamp=pendulum.now("Europe/Warsaw")
                 )
-            embed.set_author(name=member.display_name, icon=member.avatar_url)
+            embed.set_author(name=member.display_name, icon=member.make_avatar_url())
             embed.add_field(
                 name="Start",
                 value=before_channel.mention if before_channel else "Unknown"
@@ -289,6 +289,7 @@ async def on_role_remove(event: hikari.RoleDeleteEvent) -> None:
 
 
 def get_log_channel() -> typing.Optional[hikari.PermissibleGuildChannel]:
+    config_manager: ConfigManager = plugin.client.get_type_dependency(ConfigManager)
     log_channel_id = config_manager.get_config_value("LOG_CHANNEL_ID")
     if not log_channel_id:
         return None

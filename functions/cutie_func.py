@@ -2,9 +2,12 @@ import random
 
 import aiohttp
 
-pexels_api_key = '1flAeLrtSoQxHwykmOftkfvVVJ3aD6d58AooSseIGzFPhD3aPS8Z4ak8'
+from config.config_manager import ConfigManager
+
+config_manager = ConfigManager()
 
 async def get_random_image(query: str):
+    pexels_api_key = config_manager.get_config_value("PXELS_API_TOKEN")
     url = 'https://api.pexels.com/v1/search'
     headers = {
         'Authorization': pexels_api_key

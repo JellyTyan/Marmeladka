@@ -1,4 +1,5 @@
 import logging
+import re
 
 import arc
 import hikari
@@ -23,6 +24,7 @@ top = plugin.include_slash_group("top", "Server Tops", autodefer=arc.AutodeferMo
 logger = logging.getLogger(__name__)
 
 voice_start_times = {}
+voice_channel_users = {}
 
 @top.include
 @arc.slash_subcommand("bumps", "Top users by bump.")
@@ -192,15 +194,97 @@ async def on_voice_state_update(event: hikari.VoiceStateUpdateEvent) -> None:
     if member.is_bot:
         return
 
+    guild = await event.app.rest.fetch_guild(event.guild_id)
+    if guild is None:
+        return
+
+    # Пользователь присоединился к каналу
     if before is None and after is not None:
-        if member.id not in voice_start_times:
-            voice_start_times[member.id] = pendulum.now("Europe/Warsaw")
+        channel_id = after.channel_id
+        if channel_id not in voice_channel_users:
+            voice_channel_users[channel_id] = set()
+        voice_channel_users[channel_id].add(member.id)
+
+        # Начинаем отсчет только если в канале больше одного пользователя
+        if len(voice_channel_users[channel_id]) > 1:
+            if member.id not in voice_start_times:
+                voice_start_times[member.id] = pendulum.now("Europe/Warsaw")
+            # Запускаем отсчет для всех остальных в канале, если они еще не начали
+            for user_id in voice_channel_users[channel_id]:
+                if user_id != member.id and user_id not in voice_start_times:
+                    voice_start_times[user_id] = pendulum.now("Europe/Warsaw")
+
+    # Пользователь покинул канал
     elif before is not None and after.channel_id is None:
-        if member.id in voice_start_times:
-            duration = (pendulum.now("Europe/Warsaw") - voice_start_times[member.id]).total_seconds()  # noqa: E501
-            duration = round(duration)
-            await update_voice_time(member.id, member.username, duration)
-            del voice_start_times[member.id]
+        old_channel_id = before.channel_id
+        if old_channel_id in voice_channel_users:
+            voice_channel_users[old_channel_id].discard(member.id)
+
+            # Сохраняем время если пользователь был в отсчете
+            if member.id in voice_start_times:
+                duration = (pendulum.now("Europe/Warsaw") - voice_start_times[member.id]).total_seconds()
+                duration = round(duration)
+                await update_voice_time(member.id, member.username, duration)
+                del voice_start_times[member.id]
+
+            # Останавливаем отсчет для остальных если в канале остался только один человек
+            if len(voice_channel_users[old_channel_id]) == 1:
+                remaining_user = next(iter(voice_channel_users[old_channel_id]))
+                if remaining_user in voice_start_times:
+                    duration = (pendulum.now("Europe/Warsaw") - voice_start_times[remaining_user]).total_seconds()
+                    duration = round(duration)
+                    remaining_member = event.app.rest.fetch_member(event.guild_id, remaining_user)
+                    if not isinstance(remaining_member, hikari.Member):
+                        return
+                    if remaining_member:
+                        await update_voice_time(remaining_user, remaining_member.username, duration)
+                    del voice_start_times[remaining_user]
+
+            # Удаляем канал из отслеживания если он пустой
+            if len(voice_channel_users[old_channel_id]) == 0:
+                del voice_channel_users[old_channel_id]
+
+    # Пользователь переключился между каналами
+    elif before is not None and after is not None and before.channel_id != after.channel_id:
+        old_channel_id = before.channel_id
+        new_channel_id = after.channel_id
+
+        # Обработка старого канала
+        if old_channel_id in voice_channel_users:
+            voice_channel_users[old_channel_id].discard(member.id)
+
+            if member.id in voice_start_times:
+                duration = (pendulum.now("Europe/Warsaw") - voice_start_times[member.id]).total_seconds()
+                duration = round(duration)
+                await update_voice_time(member.id, member.username, duration)
+                del voice_start_times[member.id]
+
+            if len(voice_channel_users[old_channel_id]) == 1:
+                remaining_user = next(iter(voice_channel_users[old_channel_id]))
+                if remaining_user in voice_start_times:
+                    duration = (pendulum.now("Europe/Warsaw") - voice_start_times[remaining_user]).total_seconds()
+                    duration = round(duration)
+                    remaining_member = event.app.rest.fetch_member(event.guild_id, remaining_user)
+                    if not isinstance(remaining_member, hikari.Member):
+                        return
+                    if remaining_member:
+                        await update_voice_time(remaining_user, remaining_member.username, duration)
+                    del voice_start_times[remaining_user]
+
+            if len(voice_channel_users[old_channel_id]) == 0:
+                del voice_channel_users[old_channel_id]
+
+        # Обработка нового канала
+        if new_channel_id not in voice_channel_users:
+            voice_channel_users[new_channel_id] = set()
+        voice_channel_users[new_channel_id].add(member.id)
+
+        if len(voice_channel_users[new_channel_id]) > 1:
+            if member.id not in voice_start_times:
+                voice_start_times[member.id] = pendulum.now("Europe/Warsaw")
+            for user_id in voice_channel_users[new_channel_id]:
+                if user_id != member.id and user_id not in voice_start_times:
+                    voice_start_times[user_id] = pendulum.now("Europe/Warsaw")
 
 
 @arc.loader

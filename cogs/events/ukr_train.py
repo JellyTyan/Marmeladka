@@ -26,6 +26,7 @@ async def on_member_join(event: hikari.MemberCreateEvent) -> None:
                 description=f"{member.mention} прибув на наш сервер.",
                 image_url="https://cdn.discordapp.com/attachments/1108629194788847637/1113354643691536465/Untitled_video_-_Made_with_Clipchamp_3.gif"
             )
+            embed.set_author(name=member.display_name, icon=member.make_avatar_url())
             await ukr_channel.send(embed=embed)
 
         embed_welcome_user = create_embed(
@@ -64,6 +65,7 @@ async def on_member_leave(event: hikari.MemberDeleteEvent) -> None:
             description=f"{member.mention} поїхав від нас.",
             image_url="https://cdn.discordapp.com/attachments/1109526498299359303/1138139334550241291/gman-toes.gif"
         )
+        embed.set_author(name=member.display_name, icon=member.make_avatar_url())
         await ukr_channel.send(embed=embed)
 
 
