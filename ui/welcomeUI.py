@@ -286,8 +286,9 @@ class SelectLanguage(miru.View):
     @miru.text_select(
         placeholder="🌍 ┋ Polyglot?",
         options=[
-            miru.SelectOption(label="English", emoji="🏴󠁧󠁢󠁥󠁮󠁧󠁿"),
-            miru.SelectOption(label="Russian", emoji="🌮"),
+            miru.SelectOption(label="English", emoji="🇺🇸󠁧󠁢󠁥󠁮󠁧󠁿"),
+            miru.SelectOption(label="Russian", emoji="🇷🇺"),
+            miru.SelectOption(label="Ukrainian", emoji="🇺🇦"),
         ], min_values=1, max_values=1, custom_id="language_select_menu"
     )
     async def callback(self, ctx: miru.ViewContext, select: miru.TextSelect) -> None:
@@ -312,5 +313,14 @@ class SelectLanguage(miru.View):
             )
 
             await UserProfileFunc().set_lang(ctx.author.id, "ru-RU")
+
+        elif selected_option == "Ukrainian":
+            embedFunc = create_embed(
+                color=0x005BBB,
+                title="Мову встановлено на Українську",
+                description="Слава Україні!",
+            )
+
+            await UserProfileFunc().set_lang(ctx.author.id, "uk-UA")
 
         await ctx.respond(embed=embedFunc, flags=hikari.MessageFlag.EPHEMERAL)
