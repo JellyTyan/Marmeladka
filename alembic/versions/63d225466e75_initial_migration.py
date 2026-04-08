@@ -52,17 +52,16 @@ def upgrade() -> None:
 
     op.create_table(
         'nuclear_logs',
-        # baseline before migration: id is BIGINT, username VARCHAR(20), date nullable
-        sa.Column('id', sa.BigInteger(), nullable=False, autoincrement=True),
+        # Created with final column types to avoid redundant ALTERs below
+        sa.Column('id', sa.Integer(), nullable=False, autoincrement=True),
         sa.Column('user_id', sa.BigInteger(), nullable=False),
-        sa.Column('username', sa.String(length=20), nullable=True),
-        sa.Column('date', sa.Date(), nullable=True,
+        sa.Column('username', sa.String(length=32), nullable=True),
+        sa.Column('date', sa.Date(), nullable=False,
                   server_default=sa.text('CURRENT_DATE')),
         sa.Column('used', sa.Boolean(), nullable=False, server_default='false'),
         sa.Column('log_type', sa.String(length=10), nullable=False),
         sa.PrimaryKeyConstraint('id'),
     )
-    op.create_sequence('nuclear_logs_id_seq')
 
     op.create_table(
         'guild_config',
@@ -78,11 +77,11 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('guild_id'),
     )
 
-    op.create_sequence('embed_config_id_seq', start=1, increment=1)
+
     op.create_table(
         'embed_config',
         # baseline: column was misspelled "descrition" (fixed in 82a61992e39a)
-        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('id', sa.Integer(), nullable=False, autoincrement=True),
         sa.Column('guild_id', sa.BigInteger(), nullable=False),
         sa.Column('embed_key', sa.String(), nullable=True),
         sa.Column('title', sa.String(length=256), nullable=True),
@@ -98,40 +97,13 @@ def upgrade() -> None:
         sa.UniqueConstraint('guild_id', 'embed_key', name='uix_guild_embed_key'),
     )
 
-    # Now apply the column-type changes that were originally in this migration
-    op.alter_column('nuclear_logs', 'id',
-               existing_type=sa.BIGINT(),
-               type_=sa.Integer(),
-               existing_nullable=False,
-               autoincrement=True)
-    op.alter_column('nuclear_logs', 'username',
-               existing_type=sa.VARCHAR(length=20),
-               type_=sa.String(length=32),
-               existing_nullable=True)
-    op.alter_column('nuclear_logs', 'date',
-               existing_type=sa.DATE(),
-               nullable=False,
-               existing_server_default=sa.text('CURRENT_DATE'))
-    op.alter_column('user_data', 'lang',
-               existing_type=sa.VARCHAR(length=5),
-               nullable=False,
-               existing_server_default=sa.text("'en-EN'::character varying"))
-    op.alter_column('user_data', 'tag',
-               existing_type=sa.TEXT(),
-               type_=sa.String(),
-               existing_nullable=True)
-    op.alter_column('user_data', 'biography',
-               existing_type=sa.TEXT(),
-               type_=sa.String(),
-               existing_nullable=True)
+    # No ALTER TABLE calls needed — tables were created with their final types above
 
 
 def downgrade() -> None:
     """Downgrade schema — drop all tables."""
     op.drop_table('embed_config')
-    op.drop_sequence('embed_config_id_seq')
     op.drop_table('guild_config')
     op.drop_table('nuclear_logs')
-    op.drop_sequence('nuclear_logs_id_seq')
     op.drop_table('nuclear_data')
     op.drop_table('user_data')
