@@ -11,3 +11,4 @@ psycopg2-binary
 SQLAlchemy==2.0.40
 greenlet
 alembic==1.15.2
+croniter==6.0.0
